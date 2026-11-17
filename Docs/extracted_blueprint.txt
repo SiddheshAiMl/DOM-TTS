@@ -1,0 +1,470 @@
+﻿iTantra
+SIH26173 — Engineering Research & System Design Blueprint
+Indian Multilingual TTS & STT Aided Neural Transceiver Radio Access for Low-Bitrate Links
+Prepared: 15 November 2026 | Hardware baseline: 2 × ESP32 DevKit + 2 × SX1278 + 2 × Android phones
+
+1. Executive summary
+iTantra is an offline-first, multilingual, speech-over-text communication system. Each user has an Android phone connected over Bluetooth Low Energy (BLE) to a small radio node consisting of one ESP32 and one SX1278 LoRa transceiver. The two nodes exchange compact encrypted text messages over a 433 MHz radio link. Speech recognition, language selection, optional translation, chat history and speech synthesis run on the phones.
+The central engineering decision is not to transmit raw audio over LoRa. The sender converts speech into text locally, transmits the compact encrypted text, and the receiver reconstructs speech locally using TTS. This is much more suitable for a low-bitrate radio link.
+The ESP32 is a communications bridge, not an AI processor. It handles BLE GATT, SPI radio control, packet framing, buffering, acknowledgements, retries, link statistics and watchdog recovery.
+2. Problem statement and acceptance criteria
+SIH26173 is listed under ISRO / Department of Space. The problem asks for an Android application with lightweight offline STT and TTS for Hindi, Gujarati, Marathi, Kannada, Malayalam, Tamil, Telugu, Odia, Bengali and English. It requires pause-based sentence formation, low-latency transmission through Wi-Fi/Bluetooth-connected embedded hardware or another phone, received-text speech playback, alert announcements, push-to-talk operation and a phone-like mode when PTT is disabled.
+Published evaluation metric
+Weight
+Evidence to collect
+STT accuracy and TTS intelligibility
+40%
+WER/CER by language; native-listener intelligibility ratings
+Efficiency
+20%
+App/model size, peak and idle RAM, CPU use, battery drain
+Latency
+20%
+Speech-end-to-transcript, packet delivery, receive-to-audio-start, end-to-end latency and TTS real-time factor
+Other requirements
+Remaining criteria
+Offline operation, language coverage, PTT/phone modes, alerts, reliability and demonstration
+The official statement publishes the three weighted metrics above. Do not invent a detailed scoring rubric for the remaining requirements; map them to explicit acceptance tests.
+3. Proposed system architecture
+Layer
+Phone A
+Node A
+Radio
+Node B
+Phone B
+Application
+Chat, PTT, STT, TTS, language selection
+—
+—
+—
+Chat, PTT, STT, TTS, language selection
+Local transport
+BLE GATT client
+BLE GATT server
+—
+BLE GATT server
+BLE GATT client
+Radio transport
+—
+SPI + packet queue
+433 MHz LoRa P2P
+SPI + packet queue
+—
+Security
+End-to-end encrypt/decrypt
+Opaque forwarding
+Ciphertext only
+Opaque forwarding
+End-to-end encrypt/decrypt
+AI
+Local VAD + STT + optional translation
+None
+None
+None
+Local TTS + optional translation
+Data path: microphone → VAD → STT → sentence finalization → optional translation → authenticated encryption → BLE → ESP32 → LoRa → ESP32 → BLE → authentication/decryption → chat display → TTS → speaker.
+Typed chat uses the same encryption and transport path but bypasses STT. Received text can be displayed without TTS, spoken on demand, or automatically spoken according to the user's mode.
+4. Hardware design
+4.1 Bill of materials
+Qty
+Component
+Purpose / notes
+2
+ESP32 DevKit (classic ESP32-WROOM-32 class)
+BLE peripheral, SPI master, packet handling. Confirm exact module variant and available BLE stack.
+2
+SX1278 433 MHz LoRa module (e.g. Ra-02)
+Half-duplex LoRa radio. Module antenna connector and supply requirements vary.
+2
+433 MHz antenna matched to module
+Required for RF testing; use correct connector and suitable antenna.
+2
+Regulated 3.3 V supply
+Must support ESP32 and radio current peaks without brownout.
+2
+Android phones
+Local speech models, user interface, encryption and audio.
+4.2 Existing baseline pinout
+SX1278 pin
+ESP32 GPIO / connection
+VCC
+Regulated 3.3 V (verify module current and board regulator capacity)
+GND
+Common ground
+SCK
+GPIO 18
+MISO
+GPIO 19
+MOSI
+GPIO 23
+NSS / CS
+GPIO 5
+RESET
+GPIO 14
+DIO0
+GPIO 26
+This pinout matches the previously established SPI LoRa wiring for the user's ESP32 setup. Keep both nodes identical unless a measured hardware conflict requires a change.
+4.3 Electrical and RF precautions
+Do not power the SX1278 from an ESP32 3.3 V output unless the regulator's continuous and transient current capacity has been verified.
+Use a stable regulated 3.3 V supply and common ground. Add local decoupling close to the radio module.
+Connect the correct 433 MHz antenna before transmitting. Never transmit into an open antenna connector.
+Keep SPI wires short and separate RF antenna wiring from noisy power and digital wiring.
+Verify the exact SX1278 module variant, pin labels, antenna connector and supply requirements; breakout boards are not all identical.
+Measure actual conducted power and antenna gain; do not assume the module's maximum advertised PA setting is lawful.
+5. BLE interface specification
+Recommended topology: Android is the BLE Central/GATT Client; ESP32 is the BLE Peripheral/GATT Server. The ESP32 advertises a stable service UUID and a human-readable node name. BLE is the local phone-to-node cable replacement, not the long-range network.
+Characteristic
+Properties
+Purpose
+Device Info
+Read
+Protocol version, node ID, firmware version, radio capability
+TX Data
+Write / Write Without Response (after testing)
+Phone submits an encrypted application frame
+RX Data
+Notify
+Node forwards a received radio frame to the phone
+Control
+Write
+Ping, start/stop, radio settings, pairing controls
+Status
+Read / Notify
+BLE state, radio state, queue depth, RSSI, last error
+Statistics
+Notify
+TX/RX counters, ACKs, retries, packet loss, airtime estimate
+Implement application-level chunking/reassembly over BLE if the frame exceeds the negotiated ATT MTU. Never assume a single BLE write can carry an arbitrary-sized application frame. Respect Android runtime permission requirements, including BLUETOOTH_SCAN and BLUETOOTH_CONNECT on Android 12+ where applicable.
+6. LoRa radio design
+Use raw point-to-point LoRa, not LoRaWAN, for the first two-node prototype. Raw LoRa gives control over packet format, acknowledgement policy, retransmission timing and radio configuration without requiring a gateway or network server.
+The SX1278 is a half-duplex radio. The protocol must prevent both nodes from transmitting at the same time. For the two-node demo, use stop-and-wait ARQ: sender transmits one frame, receiver validates and acknowledges it, then sender proceeds. Add a randomized backoff for retries.
+Parameter
+Initial engineering approach
+Frequency
+Select a channel inside the applicable Indian permitted band only after checking the WPC category and device compliance.
+Bandwidth / spreading factor / coding rate
+Make configurable. Start with a conservative lab profile, then benchmark airtime, range, loss and legal occupied bandwidth.
+Power
+Set only after calculating ERP, module output, feedline loss and antenna gain against the applicable Indian rules.
+Payload
+Keep application messages small. Use fragmentation for long text; do not assume the largest LoRa PHY payload is a good application payload.
+Duplex
+Half duplex with explicit turn-taking / ACK windows.
+Reliability
+Sequence numbers, ACK, bounded retries, timeout, duplicate suppression and reassembly timeout.
+Link adaptation
+Optional later feature: adjust SF/BW/CR based on measured link quality, while remaining within regulatory limits.
+Important: LoRa airtime rises sharply with larger spreading factors, larger payloads and narrower bandwidth. A higher spreading factor can improve sensitivity but may make latency and duty-cycle compliance worse. Measure actual airtime rather than selecting settings by range claims alone.
+7. Indian RF regulatory constraints
+India's WPC notification G.S.R. 347(E), dated 9 May 2022, establishes license-exemption conditions for low-power devices in 433.05–434.79 MHz. One listed category specifies 10 mW ERP and a maximum 10% duty cycle. Other categories have different constraints, including a 25 kHz maximum bandwidth condition. The notification also refers to spectrum-access/mitigation requirements.
+Do not interpret '433 MHz' as blanket permission to transmit at any SX1278 setting. Confirm the exact category applicable to the chosen LoRa waveform, occupied bandwidth, duty cycle, ERP, antenna and equipment. A module capable of +20 dBm is not automatically permitted to radiate at that level. Have the final RF design checked against the current WPC rules and applicable standards before field deployment.
+Design implication: include a firmware airtime/duty-cycle limiter, configurable legal power profile, and logs of transmit duration. A software limiter is a safety control, not a substitute for RF compliance certification or legal review.
+8. End-to-end security architecture
+The user requirement is encrypted packets. The recommended design is end-to-end authenticated encryption between the two Android apps. ESP32 nodes and the LoRa channel should see only ciphertext and the minimum routing/transport metadata.
+Security property
+Design
+Confidentiality + integrity
+AES-256-GCM on the Android phones; authenticate header metadata as AAD.
+Key establishment
+For MVP, pair devices by exchanging a high-entropy random pairing secret through a QR code or physically verified code. Derive session keys using HKDF-SHA-256. For a production design, use an authenticated ephemeral key agreement such as X25519 plus an explicit identity-verification step.
+Nonce uniqueness
+Use a 96-bit GCM nonce that is guaranteed never to repeat under the same key. Use a per-session key plus monotonic counter-based nonce construction; persist counter state safely or establish a fresh key after restart.
+Replay protection
+Include sender ID, session ID and monotonically increasing sequence number in authenticated metadata. Reject duplicates and stale frames using a replay window.
+Key separation
+Derive separate directional keys for A→B and B→A, and separate keys for different sessions.
+BLE
+Use BLE pairing/bonding where appropriate, but do not treat BLE link encryption as a replacement for application end-to-end encryption.
+Key storage
+Store long-term secrets using Android Keystore where feasible; never hardcode secrets in source code or firmware.
+ESP32 role
+Forward opaque ciphertext. It must not have the application decryption key.
+Do not invent your own cipher. Do not use AES-CBC without a separate, correctly designed authentication mechanism. Do not reuse AES-GCM nonces. Do not use a fixed demo key in a production build. A checksum/CRC detects accidental corruption but does not provide cryptographic authenticity.
+9. Proposed application packet format
+Keep the transport header small and versioned. The header is not secret, but it must be authenticated as AES-GCM additional authenticated data (AAD).
+Field
+Suggested size
+Purpose
+Protocol version
+1 byte
+Compatibility
+Message type
+1 byte
+TEXT, ACK, ALERT, PING, FRAGMENT, STATUS
+Flags
+1 byte
+Language/fragment/priority flags
+Sender short ID
+4 bytes
+Source identity
+Session short ID
+4 bytes
+Session selection
+Sequence number
+4 bytes
+Ordering and replay detection
+Fragment index / count
+2 bytes
+Long-message reassembly
+Nonce
+12 bytes
+AES-GCM nonce; alternatively derive from unique session/counter fields
+Ciphertext length
+2 bytes
+Frame parsing
+Ciphertext
+variable
+UTF-8 text or control payload
+GCM tag
+16 bytes
+Authentication tag
+This is a proposed logical format, not a final packed C struct. Avoid compiler-dependent struct serialization. Define byte order, maximum lengths, versioning and test vectors in a shared protocol specification. Do not transmit audio frames in the normal low-bitrate mode.
+10. Message types and reliability
+Type
+Meaning
+Required behavior
+TEXT
+User chat sentence
+Authenticate, deduplicate, display and optionally speak
+ALERT
+Emergency alert
+High priority, repeated delivery policy, clear alert UI and audible playback
+ACK
+Acknowledgement
+Match sender/session/sequence; do not ACK an ACK
+PING / PONG
+Link test
+Measure round-trip time and liveness
+FRAGMENT
+Long message fragment
+Reassemble by message ID; enforce maximum size and timeout
+STATUS
+Node/link status
+Expose diagnostics without leaking message contents
+Use stop-and-wait ARQ first; only add sliding-window transfer if measured throughput requires it.
+Acknowledge only after a frame passes cryptographic authentication and basic validation.
+If an ACK is lost, retransmission may cause duplicates. Deduplicate using sender/session/sequence/message identifiers.
+Use bounded retries and exponential or randomized backoff; expose failed delivery to the UI rather than silently dropping messages.
+Persist outgoing messages until acknowledged or explicitly marked failed.
+Use store-and-forward queues for temporary BLE disconnection, but cap queue size and expire stale traffic.
+11. Android application design
+11.1 Recommended stack
+Area
+Recommendation
+Language
+Kotlin
+UI
+Jetpack Compose
+Architecture
+MVVM / clean separation: UI, domain, data, hardware transport, AI engine
+Local storage
+Room for messages and delivery state; DataStore for settings
+Background work
+Foreground service only when the user explicitly starts an ongoing communication session; WorkManager for model downloads/maintenance
+BLE
+Android BluetoothGatt APIs with a repository abstraction
+Speech runtime
+sherpa-onnx / ONNX Runtime Mobile after device profiling
+VAD
+Silero VAD or another verified open-source offline implementation
+STT
+AI4Bharat IndicConformer model exports or other verified language-specific offline models
+TTS
+AI4Bharat Indic-TTS model exports or another verified offline open model
+Security
+Android Keystore + audited cryptographic library / platform AES-GCM
+11.2 Main screens
+Onboarding and privacy: explain offline processing, microphone use, model downloads and pairing.
+Device pairing: scan BLE nodes, show node ID, pair and verify the peer identity using QR/code.
+Home / connection dashboard: BLE connected, LoRa peer reachable, RSSI, battery (if available), radio status and offline state.
+Chat: sent/received bubbles, timestamp, language, delivery status, play/replay, copy and resend.
+Push-to-talk: large press-and-hold button, clear recording/transcribing/sending/receiving states, cancel control.
+Phone mode: hands-free turn-based or continuous phrase mode; clearly explain that the LoRa path is not a conventional full-duplex cellular call.
+Language and model manager: choose input/output language, download verified model packs once, show size/license/version and offline-ready status.
+Emergency alerts: preset and custom alert messages, prominent acknowledgement, high-priority delivery and audible announcement.
+Diagnostics: packet counters, RSSI, retries, packet loss, latency, model memory and exportable test logs.
+11.3 Phone mode interpretation
+The phrase 'if PTT is turned off it should work like a phone' must be implemented carefully. A low-bitrate half-duplex LoRa radio cannot carry a normal live full-duplex audio call. A defensible implementation is hands-free conversational mode: VAD segments each speaker's utterances into text messages, sends them, and the other phone speaks them. The app may automatically manage turns, but it must not claim cellular-call-equivalent live audio.
+12. Speech pipeline and multilingual strategy
+12.1 STT pipeline
+Capture mono audio at the sample rate required by the selected model.
+Apply VAD to detect speech onset, pauses and end-of-utterance.
+Use endpointing with a configurable silence threshold; avoid sending every tiny pause as a separate sentence.
+Run offline STT and produce partial/final transcript states.
+Let the user correct the transcript before sending, with an optional fast-send mode.
+Normalize whitespace and punctuation without altering the user's meaning.
+Attach source language and optional target language metadata.
+12.2 TTS pipeline
+Select a voice model matching the received text language.
+Queue messages and speak in order; emergency alerts may pre-empt ordinary playback according to user settings.
+Allow replay, pause and mute.
+Measure time from authenticated text availability to first audio output.
+Keep the received text visible even when TTS is unavailable or the phone is muted.
+12.3 Ten-language rollout
+Stage
+Languages
+Exit criterion
+MVP
+Hindi + English
+Reliable two-phone offline demo over real LoRa; STT/TTS loop; security and ACKs
+Stage 2
+Marathi + Gujarati
+Model pack selection, script rendering and speech quality tested
+Stage 3
+Tamil + Telugu + Kannada + Malayalam
+Each language has verified offline STT and TTS assets
+Stage 4
+Bengali + Odia
+Full ten-language matrix with measured WER, intelligibility and device performance
+Do not claim all ten languages are supported until each has a working offline model, correct language/script handling, and repeatable test results on target Android phones. Model availability and model license can differ by language and checkpoint.
+13. Privacy, safety and emergency alert behavior
+Speech audio should remain on the sender phone and be discarded after transcription unless the user explicitly enables local voice-note retention.
+Message text and metadata should be encrypted end-to-end; avoid logging plaintext in release builds.
+Emergency alerts should have a clear origin, timestamp, priority and acknowledgement state.
+Do not silently bypass Android's user controls. Maximum-volume or DND behavior is constrained by Android permissions, notification policy access, audio focus and OEM behavior. Request required permissions transparently and provide a visible fallback.
+An emergency radio message is not a guaranteed emergency service. Display delivery status and do not imply that an alert was delivered until the peer acknowledges it.
+14. Firmware architecture
+Firmware module
+Responsibility
+main / state machine
+Boot, initialize, supervise, recover
+ble_service
+GATT service, RX/TX characteristics, BLE connection events
+lora_driver
+SX1278 SPI registers, IRQ/DIO0, TX/RX, RSSI/SNR
+frame_codec
+Byte-level framing, validation, versioning, CRC where appropriate
+radio_scheduler
+Half-duplex arbitration, ACK windows, retry/backoff and airtime limiter
+queue_manager
+BLE-to-radio and radio-to-BLE queues; backpressure
+diagnostics
+Counters, error codes, uptime, reset reason
+watchdog
+Detect deadlocks and recover safely
+The firmware should treat application ciphertext as opaque bytes. Keep radio configuration and BLE protocol versioned. Avoid blocking delays in the main event loop; use tasks/queues or an event-driven state machine.
+15. Development roadmap
+Phase
+Deliverable
+Definition of done
+0 — Bench validation
+Two ESP32 + two SX1278
+Stable bidirectional test packets; correct antenna; stable power; measured RSSI/SNR
+1 — Firmware transport
+BLE ↔ LoRa bridge
+Phone test app writes bytes to node A; node B notifies phone B; ACK/retry and duplicate handling
+2 — Security
+End-to-end encrypted payload
+Pairing, key derivation, AES-GCM, replay rejection, nonce uniqueness tests
+3 — Android chat
+Offline text chat
+Two phones exchange typed encrypted messages through real radio nodes
+4 — STT/TTS MVP
+Hindi + English
+Offline voice-to-text-to-radio-to-speech with no network
+5 — PTT + phone mode
+Voice UX
+Pause endpointing, PTT, hands-free turn-based mode and clear state UI
+6 — Alerts
+Priority messaging
+Alert delivery/ACK, audible playback subject to OS permissions, failure indication
+7 — Language expansion
+All 10 languages
+Per-language model and license verification plus test results
+8 — Evaluation
+Benchmark package
+WER/CER, TTS intelligibility, latency, RTF, memory, CPU, battery and RF test report
+16. Test and measurement plan
+Metric
+How to measure
+Report
+WER
+Reference transcript vs STT output on a fixed test set per language
+WER (%) per language and noise condition
+CER
+Character-level comparison, useful for Indic scripts
+CER (%) per language
+TTS intelligibility
+Native speakers rate blinded samples using a fixed rubric
+Mean rating and sample count
+STT endpoint latency
+Speech end timestamp to final transcript timestamp
+Median, p90, p95
+Radio delivery latency
+Encrypted frame enqueue to authenticated receive
+Median, p90, p95
+TTS start latency
+Text available to first audio sample
+Median, p90, p95
+End-to-end latency
+Last spoken word / end-of-utterance to remote audio start
+Median, p90, p95
+RTF
+TTS generation duration divided by generated audio duration
+RTF per model/device
+Reliability
+Send known sequence of messages under controlled range/interference
+Delivery ratio, retries, duplicates, timeouts
+Efficiency
+Android profiler + OS battery stats
+App size, model size, idle/peak RAM, CPU, energy
+RF
+Record frequency, ERP estimate, airtime, duty cycle, RSSI/SNR
+Configuration and compliance evidence
+Use the same scripted speech set, phones, radio configuration and distance conditions when comparing versions. Report both quiet-room and realistic-noise results. Do not publish a single best-case latency as the system's typical latency.
+17. Key risks and mitigations
+Risk
+Why it matters
+Mitigation
+433 MHz regulatory mismatch
+A technically working radio may not meet Indian power/bandwidth/duty-cycle rules
+Verify WPC category, ERP, bandwidth and duty cycle before field operation
+Poor model performance on low-end phones
+Large models can exceed RAM or thermal limits
+Per-language quantized models, lazy loading, device profiling, graceful model unload
+Ten-language scope
+Model quality and availability differ by language
+MVP first; language packs and honest support matrix
+LoRa airtime/latency
+Large SF or long messages create slow delivery
+Compact text, short frames, airtime measurements, configurable radio profile
+Packet loss/collisions
+LoRa is half duplex and interference-prone
+ACK/retry, turn-taking, backoff, sequence IDs and queueing
+Encryption mistakes
+Nonce reuse or poor pairing can break confidentiality
+Use vetted AES-GCM/HKDF implementation, test vectors, QR pairing and replay protection
+Android background limits
+BLE and audio sessions may be suspended
+Foreground service during active session; handle lifecycle and reconnect
+Alert volume expectations
+Android/OEM policies may block forced volume/DND bypass
+Request permissions transparently and provide a compliant fallback
+18. What not to do
+Do not send raw PCM audio through LoRa as the default design.
+Do not put STT/TTS models on the ESP32.
+Do not use cloud speech APIs; the solution must operate offline.
+Do not treat BLE pairing as end-to-end message encryption.
+Do not use a home-grown encryption algorithm or reuse AES-GCM nonces.
+Do not claim full-duplex phone-call behavior over half-duplex LoRa.
+Do not transmit at the SX1278 module's maximum power without checking ERP and Indian rules.
+Do not claim all ten languages work until they are individually tested.
+19. Immediate next steps for this build
+Confirm exact ESP32 board and SX1278 breakout/module model.
+Build and test the two-node raw LoRa link with the established GPIO 18/19/23/5/14/26 pinout.
+Build BLE GATT bridge firmware with a simple binary echo test before adding AI.
+Write and freeze a versioned packet protocol, including ACK and fragmentation behavior.
+Implement end-to-end AES-GCM and pairing on Android; test replay rejection and nonce uniqueness.
+Build Android typed chat first; verify phone A → BLE → LoRa → BLE → phone B.
+Integrate offline STT/TTS after the transport is reliable.
+Expand language coverage and produce a benchmark report.
+20. Research references
+Official SIH26173 problem statement — Requirements, ten languages and published evaluation metrics. https://sih2026.ankus.dev/en/ps/SIH26173
+Government of India WPC notification G.S.R. 347(E), 2022 — 433.05–434.79 MHz license-exemption conditions. https://www.eservices.dot.gov.in/sites/default/files/circular-notifications/the-use-of-low-power-radio-frequency-devices-in-the-frequency-band-433.05-to-434.79-mhz-exemption-from-license-rules-2022.pdf
+Espressif ESP-IDF BLE documentation — BLE GAP, GATT server/client and security APIs. https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/bt_le.html
+Android Bluetooth permissions — Android 12+ runtime BLE permissions. https://developer.android.com/develop/connectivity/bluetooth/bt-permissions
+AI4Bharat Indic-TTS — Open Indian-language TTS research and models; verify each checkpoint's license and deployment suitability. https://github.com/AI4Bharat/Indic-TTS
+sherpa-onnx — Offline speech processing runtime with Android support; validate selected model compatibility. https://github.com/k2-fsa/sherpa-onnx
+AI4Bharat IndicConformer model exports — Community-hosted Android-ready exports; verify provenance, model terms and exact checkpoint before adoption. https://huggingface.co/parismitaglobalsolutions/indicconformer-sherpa-onnx
+21. Important scope and evidence note
+This is an engineering design blueprint, not a certification, completed implementation or proof of model performance. Radio range, throughput, latency, WER, TTS quality, memory use and battery life must be measured on the actual hardware and phones. Verify current SIH portal details and all model/checkpoint licenses before final submission.

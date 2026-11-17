@@ -1,0 +1,8 @@
+<resources>
+    <color name="primary_saffron">#D95F02</color>
+    <color name="primary_dark_saffron">#B34800</color>
+    <color name="secondary_slate">#1A2238</color>
+    <color name="accent_terracotta">#B33925</color>
+    <color name="surface_sandstone">#F8F9FA</color>
+    <color name="surface_dark_charcoal">#121824</color>
+</resources>
