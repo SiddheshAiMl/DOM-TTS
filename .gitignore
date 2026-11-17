@@ -9,3 +9,18 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Firmware build intermediates (preserve .bin flash binaries)
+firmware/esp32_lora_bridge/build/*.elf
+firmware/esp32_lora_bridge/build/*.map
+firmware/esp32_lora_bridge/build/*.cache
+firmware/esp32_lora_bridge/build/core/
+firmware/esp32_lora_bridge/build/libraries/
+firmware/esp32_lora_bridge/build/sketch/
+firmware/esp32_lora_bridge/.pio/
+

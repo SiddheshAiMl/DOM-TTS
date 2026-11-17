@@ -11,6 +11,7 @@ import android.content.Context
 import com.itantra.core.model.DeliveryStatus
 import com.itantra.core.transport.LinkStatistics
 import com.itantra.core.transport.RadioTransport
+import com.itantra.core.transport.StopAndWaitArqEngine
 import com.itantra.core.transport.TransportConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +61,10 @@ class AndroidBleTransport(
     private val writeMutex = Mutex()
     private var reconnectJob: Job? = null
     private var reconnectDelayMs = BleConstants.INITIAL_RECONNECT_DELAY_MS
+
+    private val arqEngine = StopAndWaitArqEngine(
+        rawFrameSender = { frameBytes -> writeFrameToGatt(frameBytes) }
+    )
 
     fun setTargetDevice(device: BluetoothDevice) {
         targetDevice = device
@@ -160,6 +165,7 @@ class AndroidBleTransport(
                     val fullFrame = reassembler.processChunk(data)
                     if (fullFrame != null) {
                         scope.launch {
+                            arqEngine.onIncomingFrame(fullFrame)
                             _incomingPackets.emit(fullFrame)
                         }
                     }
@@ -212,39 +218,39 @@ class AndroidBleTransport(
     }
 
     @SuppressLint("MissingPermission")
-    override fun sendPacket(packetBytes: ByteArray): Flow<DeliveryStatus> = flow {
-        emit(DeliveryStatus.QUEUED)
-
-        val gatt = bluetoothGatt
-        val txChar = txCharacteristic
-        if (gatt == null || txChar == null || _connectionState.value != TransportConnectionState.RADIO_READY) {
-            emit(DeliveryStatus.FAILED)
-            return@flow
+    private suspend fun writeFrameToGatt(packetBytes: ByteArray): Boolean {
+        val gatt = bluetoothGatt ?: return false
+        val txChar = txCharacteristic ?: return false
+        if (_connectionState.value != TransportConnectionState.RADIO_READY) {
+            return false
         }
 
-        emit(DeliveryStatus.SENDING)
-
-        writeMutex.withLock {
+        return writeMutex.withLock {
             val chunks = BleChunker.splitFrame(packetBytes, effectiveMtu = negotiatedMtu - 3)
             for (chunk in chunks) {
                 txChar.value = chunk
                 txChar.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                 val success = gatt.writeCharacteristic(txChar)
                 if (!success) {
-                    emit(DeliveryStatus.FAILED)
-                    return@flow
+                    return@withLock false
                 }
                 delay(30) // Inter-chunk write pacing
             }
+            true
         }
+    }
 
-        emit(DeliveryStatus.SENT_TO_NODE)
-
-        // Wait for radio acknowledgement from node statistics/response
-        delay(350)
-        emit(DeliveryStatus.RADIO_ACKNOWLEDGED)
-
-        delay(200)
-        emit(DeliveryStatus.DELIVERED)
+    override fun sendPacket(packetBytes: ByteArray): Flow<DeliveryStatus> {
+        if (_connectionState.value != TransportConnectionState.RADIO_READY) {
+            return flow {
+                emit(DeliveryStatus.QUEUED)
+                emit(DeliveryStatus.FAILED)
+            }
+        }
+        return arqEngine.sendPacket(packetBytes) { _ ->
+            _linkStatistics.value = _linkStatistics.value.copy(
+                retriesCount = _linkStatistics.value.retriesCount + 1
+            )
+        }
     }
 }

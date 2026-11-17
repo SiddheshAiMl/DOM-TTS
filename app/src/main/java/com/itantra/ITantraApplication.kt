@@ -13,6 +13,7 @@ import com.itantra.core.transport.RadioTransport
 import com.itantra.speech.api.SpeechRecognizerEngine
 import com.itantra.speech.api.TextToSpeechEngine
 import com.itantra.speech.audio.AudioCaptureManager
+import com.itantra.speech.compression.SemanticCompressionEngine
 import com.itantra.speech.engine.AndroidSpeechRecognizerEngine
 import com.itantra.speech.engine.AndroidSystemTtsEngine
 import com.itantra.speech.manager.LanguageModelManager
@@ -52,6 +53,8 @@ class ITantraApplication : Application() {
 
     lateinit var languageModelManager: LanguageModelManager
         private set
+
+    val compressionEngine: SemanticCompressionEngine = SemanticCompressionEngine
 
     override fun onCreate() {
         super.onCreate()

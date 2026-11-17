@@ -7,6 +7,7 @@ import com.itantra.core.crypto.AesGcmCryptoEngine
 import com.itantra.core.model.DeliveryStatus
 import com.itantra.core.model.Message
 import com.itantra.core.protocol.PacketProtocol
+import com.itantra.speech.compression.SemanticCompressionEngine
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,19 +113,20 @@ class HandsFreeViewModel : ViewModel() {
                     initialCounter = seqNum
                 )
                 val nonce = nonceGen.nextNonce()
-                val plaintextBytes = phrase.toByteArray(Charsets.UTF_8)
+                val compressedBytes = SemanticCompressionEngine.compress(phrase, userPrefs.inputLanguage)
+                val flags = (PacketProtocol.Flags.FLAG_NEEDS_ACK.toInt() or PacketProtocol.Flags.FLAG_COMPRESSED.toInt()).toByte()
                 val header = PacketProtocol.Header(
                     messageType = PacketProtocol.MessageType.TEXT,
-                    flags = PacketProtocol.Flags.FLAG_NEEDS_ACK,
+                    flags = flags,
                     senderId = userPrefs.localNodeId,
                     sessionId = userPrefs.sessionId,
                     sequenceNumber = seqNum,
                     fragmentIndex = 0,
                     fragmentCount = 1,
                     nonce = nonce,
-                    ciphertextLength = plaintextBytes.size
+                    ciphertextLength = compressedBytes.size
                 )
-                val enc = crypto.encrypt(plaintextBytes, header, sessionKeys.keyAtoB)
+                val enc = crypto.encrypt(compressedBytes, header, sessionKeys.keyAtoB)
                 val pkt = PacketProtocol.Packet(header, enc.ciphertext, enc.tag)
                 val encoded = PacketProtocol.encode(pkt)
 

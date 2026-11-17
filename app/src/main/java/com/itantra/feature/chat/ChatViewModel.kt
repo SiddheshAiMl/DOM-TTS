@@ -8,6 +8,7 @@ import com.itantra.core.model.DeliveryStatus
 import com.itantra.core.model.Language
 import com.itantra.core.model.Message
 import com.itantra.core.protocol.PacketProtocol
+import com.itantra.speech.compression.SemanticCompressionEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +45,7 @@ class ChatViewModel : ViewModel() {
                 activeTrans.incomingPackets.collect { packetBytes ->
                     try {
                         val packet = PacketProtocol.decode(packetBytes)
-                        if (packet.header.messageType == PacketProtocol.MessageType.TEXT) {
+                        if (packet.header.messageType == PacketProtocol.MessageType.TEXT || packet.header.messageType == PacketProtocol.MessageType.ALERT) {
                             val userPrefs = prefs.preferences.value
                             val sessionKeys = crypto.deriveSessionKeys(
                                 masterSecret = "iTantra-Fixed-Pairing-Secret-32B".toByteArray(Charsets.UTF_8),
@@ -58,7 +59,12 @@ class ChatViewModel : ViewModel() {
                                 nonce = packet.header.nonce,
                                 key = sessionKeys.keyBtoA
                             )
-                            val text = String(plaintextBytes, Charsets.UTF_8)
+                            val isCompressed = (packet.header.flags.toInt() and PacketProtocol.Flags.FLAG_COMPRESSED.toInt()) != 0
+                            val text = if (isCompressed) {
+                                SemanticCompressionEngine.decompress(plaintextBytes).first
+                            } else {
+                                String(plaintextBytes, Charsets.UTF_8)
+                            }
                             val inMsg = Message(
                                 id = UUID.randomUUID().toString(),
                                 senderId = packet.header.senderId,
@@ -125,21 +131,22 @@ class ChatViewModel : ViewModel() {
             )
             val nonce = nonceGen.nextNonce()
 
-            val plaintextBytes = text.toByteArray(Charsets.UTF_8)
+            val compressedBytes = SemanticCompressionEngine.compress(text, userPrefs.inputLanguage)
+            val flags = (PacketProtocol.Flags.FLAG_NEEDS_ACK.toInt() or PacketProtocol.Flags.FLAG_COMPRESSED.toInt()).toByte()
             val header = PacketProtocol.Header(
                 messageType = PacketProtocol.MessageType.TEXT,
-                flags = PacketProtocol.Flags.FLAG_NEEDS_ACK,
+                flags = flags,
                 senderId = userPrefs.localNodeId,
                 sessionId = userPrefs.sessionId,
                 sequenceNumber = seqNum,
                 fragmentIndex = 0,
                 fragmentCount = 1,
                 nonce = nonce,
-                ciphertextLength = plaintextBytes.size
+                ciphertextLength = compressedBytes.size
             )
 
             val encryptionResult = crypto.encrypt(
-                plaintext = plaintextBytes,
+                plaintext = compressedBytes,
                 header = header,
                 key = sessionKeys.keyAtoB
             )
@@ -182,19 +189,20 @@ class ChatViewModel : ViewModel() {
                 initialCounter = seqNum
             )
             val nonce = nonceGen.nextNonce()
-            val plaintextBytes = message.text.toByteArray(Charsets.UTF_8)
+            val compressedBytes = SemanticCompressionEngine.compress(message.text, message.sourceLanguage)
+            val flags = (PacketProtocol.Flags.FLAG_NEEDS_ACK.toInt() or PacketProtocol.Flags.FLAG_COMPRESSED.toInt()).toByte()
             val header = PacketProtocol.Header(
                 messageType = PacketProtocol.MessageType.TEXT,
-                flags = PacketProtocol.Flags.FLAG_NEEDS_ACK,
+                flags = flags,
                 senderId = userPrefs.localNodeId,
                 sessionId = userPrefs.sessionId,
                 sequenceNumber = seqNum,
                 fragmentIndex = 0,
                 fragmentCount = 1,
                 nonce = nonce,
-                ciphertextLength = plaintextBytes.size
+                ciphertextLength = compressedBytes.size
             )
-            val enc = crypto.encrypt(plaintextBytes, header, sessionKeys.keyAtoB)
+            val enc = crypto.encrypt(compressedBytes, header, sessionKeys.keyAtoB)
             val pkt = PacketProtocol.Packet(header, enc.ciphertext, enc.tag)
             val encoded = PacketProtocol.encode(pkt)
 

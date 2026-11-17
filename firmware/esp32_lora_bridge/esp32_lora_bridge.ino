@@ -1,11 +1,11 @@
 /**
  * iTantra — ESP32 to SX1278 LoRa & BLE Transparent Packet Bridge
- * Arduino IDE Sketch
+ * Arduino IDE Sketch & PlatformIO Entry
  * Project: SIH26173
  *
  * Board: ESP32 Dev Module
- * Library Dependencies:
- *   - LoRa by Sandeep Mistry (Install via Arduino Library Manager)
+ * Hardware: ESP32-D0WD-V3 + SX1278 (Ra-02 433 MHz)
+ * Regulatory Compliance: Indian WPC G.S.R. 347(E) (433.05 - 434.79 MHz, 10% duty cycle, 10 mW ERP)
  */
 
 #include <SPI.h>
@@ -54,16 +54,19 @@ struct LinkStats {
   int8_t   lastRssi = -120;
   int8_t   lastSnr = 0;
   uint32_t totalAirtimeMs = 0;
+  uint32_t windowAirtimeMs = 0;
   uint16_t lastError = 0;
 } g_stats;
 
 BLEServer*         pServer = nullptr;
 BLECharacteristic* pTxDataChar = nullptr;
 BLECharacteristic* pRxDataChar = nullptr;
+BLECharacteristic* pControlChar = nullptr;
 BLECharacteristic* pStatusChar = nullptr;
 BLECharacteristic* pStatsChar = nullptr;
 bool               bBleConnected = false;
 uint16_t           g_negotiatedMtu = 23;
+bool               g_bRadioInitialized = false;
 
 QueueHandle_t qBleToRadio;
 QueueHandle_t qRadioToBle;
@@ -89,64 +92,25 @@ struct BleReassembler {
   }
 } g_reassembler;
 
-class ServerCallbacks : public BLEServerCallbacks {
-  void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override {
-    bBleConnected = true;
-    Serial.println("[BLE] Client phone connected");
-  }
+void updateStatusRecord(uint8_t radioState, uint16_t errorCode) {
+  g_stats.lastError = errorCode;
+  uint8_t statusRecord[8];
+  statusRecord[0] = radioState;
+  statusRecord[1] = 0x00;
+  statusRecord[2] = (uint8_t)(qBleToRadio ? uxQueueMessagesWaiting(qBleToRadio) : 0);
+  statusRecord[3] = (uint8_t)(qRadioToBle ? uxQueueMessagesWaiting(qRadioToBle) : 0);
+  statusRecord[4] = (errorCode >> 8) & 0xFF;
+  statusRecord[5] = errorCode & 0xFF;
+  statusRecord[6] = 0x00;
+  statusRecord[7] = 0x00;
 
-  void onDisconnect(BLEServer* pServer) override {
-    bBleConnected = false;
-    Serial.println("[BLE] Client disconnected. Restarting advertising...");
-    pServer->getAdvertising()->start();
-  }
-};
-
-class TxDataCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic* pChar) override {
-    uint8_t* bytes = pChar->getData();
-    size_t chunkLen = pChar->getLength();
-    if (bytes == nullptr || chunkLen < BLE_CHUNK_HEADER_SIZE) return;
-
-    uint8_t flags = bytes[0];
-    uint8_t totalLength = bytes[1];
-    bool isStart = (flags & CHUNK_FLAG_START) != 0;
-    bool isEnd   = (flags & CHUNK_FLAG_END) != 0;
-    uint8_t seq  = (flags & CHUNK_SEQ_MASK);
-
-    uint8_t payloadLen = chunkLen - BLE_CHUNK_HEADER_SIZE;
-    const uint8_t* payload = bytes + BLE_CHUNK_HEADER_SIZE;
-
-    if (isStart) {
-      g_reassembler.reset();
-      g_reassembler.expectedLength = totalLength;
-      g_reassembler.lastSeq = seq;
-      memcpy(g_reassembler.buffer, payload, payloadLen);
-      g_reassembler.currentOffset = payloadLen;
-    } else {
-      if (g_reassembler.expectedLength == 0) return;
-      if (seq != ((g_reassembler.lastSeq + 1) & CHUNK_SEQ_MASK)) {
-        g_reassembler.reset();
-        return;
-      }
-      g_reassembler.lastSeq = seq;
-      memcpy(g_reassembler.buffer + g_reassembler.currentOffset, payload, payloadLen);
-      g_reassembler.currentOffset += payloadLen;
-    }
-
-    if (isEnd && g_reassembler.currentOffset == g_reassembler.expectedLength) {
-      RadioPacket pkt;
-      pkt.length = g_reassembler.expectedLength;
-      memcpy(pkt.data, g_reassembler.buffer, pkt.length);
-
-      if (xQueueSend(qBleToRadio, &pkt, pdMS_TO_TICKS(50)) != pdTRUE) {
-        g_stats.droppedCount++;
-        Serial.println("[QUEUE] Outbound queue full. Packet dropped.");
-      }
-      g_reassembler.reset();
+  if (pStatusChar != nullptr) {
+    pStatusChar->setValue(statusRecord, 8);
+    if (bBleConnected) {
+      pStatusChar->notify();
     }
   }
-};
+}
 
 void broadcastStatistics() {
   if (!bBleConnected || pStatsChar == nullptr) return;
@@ -171,13 +135,190 @@ void broadcastStatistics() {
   record[12] = (uint8_t)g_stats.lastRssi;
   record[13] = (uint8_t)g_stats.lastSnr;
 
-  uint16_t airtimeSec = g_stats.totalAirtimeMs / 1000;
+  uint16_t airtimeSec = g_stats.windowAirtimeMs / 1000;
   record[14] = (airtimeSec >> 8) & 0xFF;
   record[15] = airtimeSec & 0xFF;
 
   pStatsChar->setValue(record, 16);
   pStatsChar->notify();
 }
+
+class ServerCallbacks : public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override {
+    bBleConnected = true;
+    Serial.println("[BLE] Client phone connected");
+    updateStatusRecord(0x01, 0x0000);
+  }
+
+  void onDisconnect(BLEServer* pServer) override {
+    bBleConnected = false;
+    g_negotiatedMtu = 23;
+    Serial.println("[BLE] Client disconnected. Restarting advertising...");
+    pServer->getAdvertising()->start();
+  }
+
+#if defined(CONFIG_BLUEDROID_ENABLED)
+  void onMtuChanged(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override {
+    if (param) {
+      g_negotiatedMtu = param->mtu.mtu;
+      Serial.printf("[BLE] ATT MTU negotiated: %d bytes\n", g_negotiatedMtu);
+    }
+  }
+#endif
+};
+
+class TxDataCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic* pChar) override {
+    uint8_t* bytes = pChar->getData();
+    size_t chunkLen = pChar->getLength();
+    if (bytes == nullptr || chunkLen < BLE_CHUNK_HEADER_SIZE) return;
+
+    uint8_t flags = bytes[0];
+    uint8_t totalLength = bytes[1];
+    bool isStart = (flags & CHUNK_FLAG_START) != 0;
+    bool isEnd   = (flags & CHUNK_FLAG_END) != 0;
+    uint8_t seq  = (flags & CHUNK_SEQ_MASK);
+
+    uint8_t payloadLen = chunkLen - BLE_CHUNK_HEADER_SIZE;
+    const uint8_t* payload = bytes + BLE_CHUNK_HEADER_SIZE;
+
+    // Boundary checks to strictly prevent buffer overflow
+    if (payloadLen > MAX_LORA_FRAME_LEN || totalLength > MAX_LORA_FRAME_LEN) {
+      g_reassembler.reset();
+      updateStatusRecord(0x01, 0x0004);
+      return;
+    }
+
+    if (isStart) {
+      g_reassembler.reset();
+      g_reassembler.expectedLength = totalLength;
+      g_reassembler.lastSeq = seq;
+      memcpy(g_reassembler.buffer, payload, payloadLen);
+      g_reassembler.currentOffset = payloadLen;
+    } else {
+      if (g_reassembler.expectedLength == 0) return;
+      if (seq != ((g_reassembler.lastSeq + 1) & CHUNK_SEQ_MASK)) {
+        g_reassembler.reset();
+        return;
+      }
+      if ((g_reassembler.currentOffset + payloadLen) > MAX_LORA_FRAME_LEN ||
+          (g_reassembler.currentOffset + payloadLen) > g_reassembler.expectedLength) {
+        g_reassembler.reset();
+        updateStatusRecord(0x01, 0x0004);
+        return;
+      }
+      g_reassembler.lastSeq = seq;
+      memcpy(g_reassembler.buffer + g_reassembler.currentOffset, payload, payloadLen);
+      g_reassembler.currentOffset += payloadLen;
+    }
+
+    if (isEnd && g_reassembler.currentOffset == g_reassembler.expectedLength) {
+      RadioPacket pkt;
+      pkt.length = g_reassembler.expectedLength;
+      memcpy(pkt.data, g_reassembler.buffer, pkt.length);
+
+      if (xQueueSend(qBleToRadio, &pkt, pdMS_TO_TICKS(50)) != pdTRUE) {
+        g_stats.droppedCount++;
+        updateStatusRecord(0x01, 0x0003);
+        Serial.println("[QUEUE] Outbound queue full. Packet dropped.");
+      }
+      g_reassembler.reset();
+    }
+  }
+};
+
+class ControlCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic* pChar) override {
+    uint8_t* data = pChar->getData();
+    size_t len = pChar->getLength();
+    if (data == nullptr || len < 1) return;
+
+    uint8_t cmdId = data[0];
+    uint8_t payloadLen = (len >= 2) ? data[1] : 0;
+    const uint8_t* payload = (len >= 2 + payloadLen) ? (data + 2) : nullptr;
+
+    switch (cmdId) {
+      case 0x01: { // PING_NODE
+        Serial.println("[BLE CMD] PING_NODE received");
+        updateStatusRecord(0x01, 0x0000);
+        broadcastStatistics();
+        break;
+      }
+      case 0x02: { // RESET_RADIO
+        Serial.println("[BLE CMD] RESET_RADIO received");
+        xSemaphoreTake(xSpiMutex, portMAX_DELAY);
+        pinMode(LORA_RST_PIN, OUTPUT);
+        digitalWrite(LORA_RST_PIN, LOW);
+        delay(20);
+        digitalWrite(LORA_RST_PIN, HIGH);
+        delay(50);
+        bool ok = LoRa.begin(LORA_CARRIER_FREQ_HZ);
+        if (ok) {
+          LoRa.setSignalBandwidth(LORA_BANDWIDTH_HZ);
+          LoRa.setSpreadingFactor(LORA_SPREADING_FACTOR);
+          LoRa.setCodingRate4(LORA_CODING_RATE);
+          LoRa.setSyncWord(LORA_SYNC_WORD);
+          LoRa.setTxPower(LORA_TX_POWER_DBM);
+          LoRa.enableCrc();
+          LoRa.receive();
+          g_bRadioInitialized = true;
+          updateStatusRecord(0x01, 0x0000);
+          Serial.println("[RADIO] SX1278 Reinitialized successfully.");
+        } else {
+          g_bRadioInitialized = false;
+          updateStatusRecord(0x04, 0x0001);
+          Serial.println("[RADIO] SX1278 Reinitialization failed!");
+        }
+        xSemaphoreGive(xSpiMutex);
+        break;
+      }
+      case 0x03: { // SET_FREQUENCY
+        if (payload && payloadLen >= 4) {
+          uint32_t freq = ((uint32_t)payload[0] << 24) |
+                          ((uint32_t)payload[1] << 16) |
+                          ((uint32_t)payload[2] << 8)  |
+                          ((uint32_t)payload[3]);
+          if (freq >= 433050000UL && freq <= 434790000UL) {
+            xSemaphoreTake(xSpiMutex, portMAX_DELAY);
+            LoRa.setFrequency(freq);
+            xSemaphoreGive(xSpiMutex);
+            Serial.printf("[BLE CMD] Frequency set to %u Hz\n", freq);
+          } else {
+            Serial.printf("[BLE CMD] Frequency %u Hz out of legal WPC band!\n", freq);
+          }
+        }
+        break;
+      }
+      case 0x04: { // SET_TX_POWER
+        if (payload && payloadLen >= 1) {
+          int8_t power = (int8_t)payload[0];
+          if (power > LORA_TX_POWER_DBM) power = LORA_TX_POWER_DBM;
+          if (power < 2) power = 2;
+          xSemaphoreTake(xSpiMutex, portMAX_DELAY);
+          LoRa.setTxPower(power);
+          xSemaphoreGive(xSpiMutex);
+          Serial.printf("[BLE CMD] TX Power set to %d dBm\n", power);
+        }
+        break;
+      }
+      case 0x05: { // CLEAR_STATS
+        Serial.println("[BLE CMD] CLEAR_STATS received");
+        g_stats.txCount = 0;
+        g_stats.rxCount = 0;
+        g_stats.retriesCount = 0;
+        g_stats.droppedCount = 0;
+        g_stats.windowAirtimeMs = 0;
+        g_stats.lastError = 0x0000;
+        updateStatusRecord(0x01, 0x0000);
+        broadcastStatistics();
+        break;
+      }
+      default:
+        Serial.printf("[BLE CMD] Unknown command 0x%02X\n", cmdId);
+        break;
+    }
+  }
+};
 
 void notifyBleInboundFrame(const uint8_t* frame, size_t length) {
   if (!bBleConnected || pRxDataChar == nullptr || length == 0) return;
@@ -197,7 +338,7 @@ void notifyBleInboundFrame(const uint8_t* frame, size_t length) {
     if (isStart) flags |= CHUNK_FLAG_START;
     if (isEnd)   flags |= CHUNK_FLAG_END;
 
-    static uint8_t chunk[256];
+    uint8_t chunk[256];
     chunk[0] = flags;
     chunk[1] = (uint8_t)length;
     memcpy(chunk + BLE_CHUNK_HEADER_SIZE, frame + offset, chunkPayloadLen);
@@ -215,17 +356,37 @@ void radioTask(void* pvParameters) {
   esp_task_wdt_add(NULL);
   RadioPacket outbound;
   static uint8_t rxBuffer[MAX_LORA_FRAME_LEN];
+  static uint32_t windowStartMs = 0;
+  static uint32_t windowAirtimeMs = 0;
 
   for (;;) {
     esp_task_wdt_reset();
 
+    if (!g_bRadioInitialized) {
+      if (xQueueReceive(qBleToRadio, &outbound, pdMS_TO_TICKS(100)) == pdTRUE) {
+        g_stats.droppedCount++;
+        Serial.println("[RADIO] Dropping packet: SX1278 transceiver uninitialized.");
+      }
+      vTaskDelay(pdMS_TO_TICKS(100));
+      continue;
+    }
+
+    // 1. Check outbound queue from BLE or Serial CLI
     if (xQueueReceive(qBleToRadio, &outbound, pdMS_TO_TICKS(20)) == pdTRUE) {
-      if ((g_stats.totalAirtimeMs / 1000) >= WPC_MAX_DUTY_CYCLE_SEC) {
+      uint32_t now = millis();
+      // 1-hour rolling window reset (3,600,000 ms)
+      if (windowStartMs == 0 || (now - windowStartMs >= 3600000UL)) {
+        windowStartMs = now;
+        windowAirtimeMs = 0;
+      }
+
+      if ((windowAirtimeMs / 1000) >= WPC_MAX_DUTY_CYCLE_SEC) {
         Serial.println("[RADIO] WPC Duty Cycle limit reached (10%). TX blocked.");
-        g_stats.lastError = 0x0005;
+        updateStatusRecord(0x01, 0x0005);
         continue;
       }
 
+      updateStatusRecord(0x02, 0x0000);
       xSemaphoreTake(xSpiMutex, portMAX_DELAY);
       uint32_t txStart = millis();
 
@@ -234,21 +395,27 @@ void radioTask(void* pvParameters) {
       LoRa.endPacket();
 
       uint32_t duration = millis() - txStart;
+      windowAirtimeMs += duration;
+      g_stats.windowAirtimeMs = windowAirtimeMs;
       g_stats.totalAirtimeMs += duration;
       g_stats.txCount++;
 
       LoRa.receive();
       xSemaphoreGive(xSpiMutex);
 
-      Serial.printf("[LORA TX] Sent %d bytes in %d ms (Total TX: %d)\n",
-                    outbound.length, duration, g_stats.txCount);
+      updateStatusRecord(0x01, 0x0000);
+
+      Serial.printf("[LORA TX] Sent %d bytes in %d ms (Total TX: %d, Window: %d s)\n",
+                    outbound.length, duration, g_stats.txCount, windowAirtimeMs / 1000);
 
       broadcastStatistics();
     }
 
+    // 2. Poll inbound packets from LoRa SX1278
     xSemaphoreTake(xSpiMutex, portMAX_DELAY);
     int packetSize = LoRa.parsePacket();
     if (packetSize > 0) {
+      updateStatusRecord(0x03, 0x0000);
       int len = 0;
       while (LoRa.available() && len < MAX_LORA_FRAME_LEN) {
         rxBuffer[len++] = LoRa.read();
@@ -270,7 +437,17 @@ void radioTask(void* pvParameters) {
       }
       Serial.println();
 
-      notifyBleInboundFrame(rxBuffer, len);
+      // Enqueue to qRadioToBle for Core 0 decoupling (does NOT block Core 1 with BLE delay)
+      RadioPacket rxPkt;
+      rxPkt.length = len;
+      memcpy(rxPkt.data, rxBuffer, len);
+      if (xQueueSend(qRadioToBle, &rxPkt, 0) != pdTRUE) {
+        g_stats.droppedCount++;
+        updateStatusRecord(0x01, 0x0003);
+        Serial.println("[QUEUE] Inbound radio queue full. Packet dropped.");
+      }
+
+      updateStatusRecord(0x01, 0x0000);
       broadcastStatistics();
     } else {
       xSemaphoreGive(xSpiMutex);
@@ -291,30 +468,31 @@ void telemetryTask(void* pvParameters) {
 
 void setup() {
   Serial.begin(115200);
+  Serial.setTimeout(50);
   delay(1000);
   Serial.println("==================================================");
   Serial.println("   iTantra ESP32 LoRa-BLE Bridge (SIH26173)");
   Serial.println("==================================================");
 
-  qBleToRadio = xQueueCreate(16, sizeof(RadioPacket));
-  qRadioToBle = xQueueCreate(16, sizeof(RadioPacket));
+  qBleToRadio = xQueueCreate(20, sizeof(RadioPacket));
+  qRadioToBle = xQueueCreate(20, sizeof(RadioPacket));
   xSpiMutex   = xSemaphoreCreateMutex();
 
   SPI.begin(LORA_SCK_PIN, LORA_MISO_PIN, LORA_MOSI_PIN, LORA_SS_PIN);
   LoRa.setPins(LORA_SS_PIN, LORA_RST_PIN, LORA_DIO0_PIN);
 
   Serial.print("[RADIO] Initializing SX1278 at 433.175 MHz ... ");
-  bool radioOk = LoRa.begin(LORA_CARRIER_FREQ_HZ);
-  if (!radioOk) {
+  g_bRadioInitialized = LoRa.begin(LORA_CARRIER_FREQ_HZ);
+  if (!g_bRadioInitialized) {
     pinMode(LORA_RST_PIN, OUTPUT);
     digitalWrite(LORA_RST_PIN, LOW);
     delay(20);
     digitalWrite(LORA_RST_PIN, HIGH);
     delay(50);
-    radioOk = LoRa.begin(LORA_CARRIER_FREQ_HZ);
+    g_bRadioInitialized = LoRa.begin(LORA_CARRIER_FREQ_HZ);
   }
 
-  if (radioOk) {
+  if (g_bRadioInitialized) {
     Serial.println("SUCCESS!");
     LoRa.setSignalBandwidth(LORA_BANDWIDTH_HZ);
     LoRa.setSpreadingFactor(LORA_SPREADING_FACTOR);
@@ -334,8 +512,9 @@ void setup() {
     g_stats.lastError = 0x0001;
   }
 
+  // Base MAC address derivation for node naming (iTantra-Node-CD14 and iTantra-Node-DD00)
   uint8_t mac[6];
-  esp_read_mac(mac, ESP_MAC_BT);
+  esp_read_mac(mac, ESP_MAC_WIFI_STA);
   char deviceName[32];
   snprintf(deviceName, sizeof(deviceName), "iTantra-Node-%02X%02X", mac[4], mac[5]);
 
@@ -364,18 +543,24 @@ void setup() {
   );
   pRxDataChar->addDescriptor(new BLE2902());
 
+  pControlChar = pService->createCharacteristic(
+      CHAR_CONTROL_UUID,
+      BLECharacteristic::PROPERTY_WRITE
+  );
+  pControlChar->setCallbacks(new ControlCallbacks());
+
+  pStatusChar = pService->createCharacteristic(
+      CHAR_STATUS_UUID,
+      BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
+  );
+  pStatusChar->addDescriptor(new BLE2902());
+  updateStatusRecord(g_bRadioInitialized ? 0x01 : 0x04, g_bRadioInitialized ? 0x0000 : 0x0001);
+
   pStatsChar = pService->createCharacteristic(
       CHAR_STATISTICS_UUID,
       BLECharacteristic::PROPERTY_NOTIFY
   );
   pStatsChar->addDescriptor(new BLE2902());
-
-  pStatusChar = pService->createCharacteristic(
-      CHAR_STATUS_UUID,
-      BLECharacteristic::PROPERTY_READ
-  );
-  uint8_t initStatus[8] = { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-  pStatusChar->setValue(initStatus, 8);
 
   pService->start();
 
@@ -392,7 +577,7 @@ void setup() {
   esp_task_wdt_config_t twdt_config = {
       .timeout_ms = 5000,
       .idle_core_mask = 0,
-      .trigger_panic = false
+      .trigger_panic = true
   };
   esp_task_wdt_reconfigure(&twdt_config);
 #else
@@ -408,6 +593,14 @@ void setup() {
 
 void loop() {
   esp_task_wdt_reset();
+
+  // 1. Decoupled Core 0 processing: Drain inbound radio packets to BLE
+  RadioPacket rxPkt;
+  while (xQueueReceive(qRadioToBle, &rxPkt, 0) == pdTRUE) {
+    notifyBleInboundFrame(rxPkt.data, rxPkt.length);
+  }
+
+  // 2. Serial CLI Handler
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
@@ -416,14 +609,23 @@ void loop() {
       RadioPacket pkt;
       pkt.length = min((size_t)payload.length(), (size_t)MAX_LORA_FRAME_LEN);
       memcpy(pkt.data, payload.c_str(), pkt.length);
-      xQueueSend(qBleToRadio, &pkt, pdMS_TO_TICKS(100));
-      Serial.printf("[SERIAL CMD] Queued LoRa TX: '%s' (%d bytes)\n", payload.c_str(), pkt.length);
+      if (xQueueSend(qBleToRadio, &pkt, pdMS_TO_TICKS(100)) == pdTRUE) {
+        Serial.printf("[SERIAL CMD] Queued LoRa TX: '%s' (%d bytes)\n", payload.c_str(), pkt.length);
+      } else {
+        g_stats.droppedCount++;
+        updateStatusRecord(0x01, 0x0003);
+        Serial.println("[SERIAL CMD] ERROR: Outbound radio queue full. Packet dropped.");
+      }
     } else if (cmd == "PING") {
       Serial.println("[PONG] iTantra Node Online");
     } else if (cmd == "STATS") {
-      Serial.printf("[STATS] TX: %d | RX: %d | Retries: %d | RSSI: %d dBm | SNR: %d dB\n",
-                    g_stats.txCount, g_stats.rxCount, g_stats.retriesCount, g_stats.lastRssi, g_stats.lastSnr);
+      Serial.printf("[STATS] TX: %d | RX: %d | Retries: %d | Dropped: %d | RSSI: %d dBm | SNR: %d dB | Airtime(1h): %d s\n",
+                    g_stats.txCount, g_stats.rxCount, g_stats.retriesCount, g_stats.droppedCount,
+                    g_stats.lastRssi, g_stats.lastSnr, g_stats.windowAirtimeMs / 1000);
+    } else if (cmd.length() > 0) {
+      Serial.printf("[SERIAL CMD] Unknown command: '%s'\n", cmd.c_str());
     }
   }
-  vTaskDelay(pdMS_TO_TICKS(50));
+
+  vTaskDelay(pdMS_TO_TICKS(10));
 }

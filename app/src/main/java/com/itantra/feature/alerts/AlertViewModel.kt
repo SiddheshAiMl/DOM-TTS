@@ -8,6 +8,7 @@ import com.itantra.core.model.AlertType
 import com.itantra.core.model.DeliveryStatus
 import com.itantra.core.model.Message
 import com.itantra.core.protocol.PacketProtocol
+import com.itantra.speech.compression.SemanticCompressionEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -84,20 +85,23 @@ class AlertViewModel : ViewModel() {
                 initialCounter = seqNum
             )
             val nonce = nonceGen.nextNonce()
-            val plaintextBytes = message.text.toByteArray(Charsets.UTF_8)
+            val compressedBytes = SemanticCompressionEngine.compress(message.text, userPrefs.inputLanguage)
+            val flags = (PacketProtocol.Flags.FLAG_URGENT.toInt() or
+                         PacketProtocol.Flags.FLAG_NEEDS_ACK.toInt() or
+                         PacketProtocol.Flags.FLAG_COMPRESSED.toInt()).toByte()
             val header = PacketProtocol.Header(
                 messageType = PacketProtocol.MessageType.ALERT,
-                flags = (PacketProtocol.Flags.FLAG_URGENT.toInt() or PacketProtocol.Flags.FLAG_NEEDS_ACK.toInt()).toByte(),
+                flags = flags,
                 senderId = userPrefs.localNodeId,
                 sessionId = userPrefs.sessionId,
                 sequenceNumber = seqNum,
                 fragmentIndex = 0,
                 fragmentCount = 1,
                 nonce = nonce,
-                ciphertextLength = plaintextBytes.size
+                ciphertextLength = compressedBytes.size
             )
 
-            val enc = crypto.encrypt(plaintextBytes, header, sessionKeys.keyAtoB)
+            val enc = crypto.encrypt(compressedBytes, header, sessionKeys.keyAtoB)
             val pkt = PacketProtocol.Packet(header, enc.ciphertext, enc.tag)
             val encoded = PacketProtocol.encode(pkt)
 

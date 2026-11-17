@@ -13,6 +13,7 @@ fun main(args: Array<String>) {
         com.itantra.pairing.PairingManagerTest::class.java,
         com.itantra.transport.PriorityTransportQueueTest::class.java,
         com.itantra.transport.StopAndWaitArqTest::class.java,
+        com.itantra.speech.compression.SemanticCompressionEngineTest::class.java,
         com.itantra.speech.EnergyAndSileroVadTest::class.java,
         com.itantra.speech.LanguageModelManagerTest::class.java,
         com.itantra.speech.AudioBufferSecurityTest::class.java,

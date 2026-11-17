@@ -1,0 +1,2098 @@
+{
+  "timestamp": "2026-11-17T16:40:14.736415+00:00",
+  "total": 232,
+  "passed": 232,
+  "failed": 0,
+  "elapsed_seconds": 0.44926953315734863,
+  "mode": "simulated",
+  "results": [
+    {
+      "test_id": "test_t1_f01_01_jdk21_installation",
+      "name": "T1_F01_01: Verify JDK 21 installation (javac -version contains 21).",
+      "tier": 1,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.1324009895324707,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f01_02_java_home_validity",
+      "name": "T1_F01_02: Verify JAVA_HOME points to valid JDK directory with bin/javac.exe.",
+      "tier": 1,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.00019216537475585938,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f01_03_android_sdk_root",
+      "name": "T1_F01_03: Verify Android SDK root directory exists and contains platform-tools.",
+      "tier": 1,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.0003743171691894531,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f01_04_android_build_tools",
+      "name": "T1_F01_04: Verify Android build-tools version >= 34.0.0 or 35.0.0 present.",
+      "tier": 1,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.00031876564025878906,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f01_05_compile_sdk_platform",
+      "name": "T1_F01_05: Verify Android compile SDK platform android-35 present.",
+      "tier": 1,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.00021839141845703125,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f02_01_gradle_properties_no_hardcoded_paths",
+      "name": "T1_F02_01: Verify gradle.properties does NOT contain hardcoded developer paths.",
+      "tier": 1,
+      "feature": "F2",
+      "passed": true,
+      "duration": 9.775161743164062e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f02_02_gradle_wrapper_script",
+      "name": "T1_F02_02: Verify Gradle wrapper script gradlew.bat exists and is valid.",
+      "tier": 1,
+      "feature": "F2",
+      "passed": true,
+      "duration": 8.654594421386719e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f02_03_version_catalog_validity",
+      "name": "T1_F02_03: Verify gradle/libs.versions.toml declares AGP, Kotlin, Compose, Room.",
+      "tier": 1,
+      "feature": "F2",
+      "passed": true,
+      "duration": 0.00010538101196289062,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f02_04_settings_gradle_configuration",
+      "name": "T1_F02_04: Verify settings.gradle.kts declares rootProject.name = 'iTantra' and includes :app.",
+      "tier": 1,
+      "feature": "F2",
+      "passed": true,
+      "duration": 9.059906005859375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f02_05_root_build_script_syntax",
+      "name": "T1_F02_05: Verify root build.gradle.kts has plugins DSL configured properly.",
+      "tier": 1,
+      "feature": "F2",
+      "passed": true,
+      "duration": 7.891654968261719e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f03_01_detect_serial_ports",
+      "name": "T1_F03_01: Detect presence of serial COM ports (COM6 and COM7) or simulated nodes.",
+      "tier": 1,
+      "feature": "F3",
+      "passed": true,
+      "duration": 8.58306884765625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f03_02_node_a_identification",
+      "name": "T1_F03_02: Verify Node A (COM6) responds to CP210x identification or simulator.",
+      "tier": 1,
+      "feature": "F3",
+      "passed": true,
+      "duration": 4.291534423828125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f03_03_node_b_identification",
+      "name": "T1_F03_03: Verify Node B (COM7) responds to CP210x identification or simulator.",
+      "tier": 1,
+      "feature": "F3",
+      "passed": true,
+      "duration": 1.430511474609375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f03_04_node_a_mac_mapping",
+      "name": "T1_F03_04: Verify Node A MAC address maps to BLE name iTantra-Node-CD14.",
+      "tier": 1,
+      "feature": "F3",
+      "passed": true,
+      "duration": 4.76837158203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f03_05_node_b_mac_mapping",
+      "name": "T1_F03_05: Verify Node B MAC address maps to BLE name iTantra-Node-DD00.",
+      "tier": 1,
+      "feature": "F3",
+      "passed": true,
+      "duration": 9.5367431640625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f04_01_firmware_file_exists",
+      "name": "T1_F04_01: Verify firmware/esp32_lora_bridge/esp32_lora_bridge.ino exists.",
+      "tier": 1,
+      "feature": "F4",
+      "passed": true,
+      "duration": 0.00019621849060058594,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f04_02_spi_pin_definitions",
+      "name": "T1_F04_02: Verify SPI pin definitions (SCK=18, MISO=19, MOSI=23, CS=5, RST=14, DIO0=26).",
+      "tier": 1,
+      "feature": "F4",
+      "passed": true,
+      "duration": 9.703636169433594e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f04_03_wpc_frequency_configuration",
+      "name": "T1_F04_03: Verify WPC ISM frequency set to 433.175 MHz and bandwidth 125 kHz.",
+      "tier": 1,
+      "feature": "F4",
+      "passed": true,
+      "duration": 6.985664367675781e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f04_04_freertos_queue_declarations",
+      "name": "T1_F04_04: Verify FreeRTOS queues qBleToRadio and qRadioToBle declared and initialized.",
+      "tier": 1,
+      "feature": "F4",
+      "passed": true,
+      "duration": 6.723403930664062e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f04_05_wpc_duty_cycle_limiter_code",
+      "name": "T1_F04_05: Verify WPC duty cycle limiter (10% / 360s/hr) enforcement code active.",
+      "tier": 1,
+      "feature": "F4",
+      "passed": true,
+      "duration": 6.103515625e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f05_01_node_a_ping_pong",
+      "name": "T1_F05_01: Send PING\\r\\n to Node A -> expect [PONG] iTantra Node Online.",
+      "tier": 1,
+      "feature": "F5",
+      "passed": true,
+      "duration": 4.76837158203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f05_02_node_b_ping_pong",
+      "name": "T1_F05_02: Send PING\\r\\n to Node B -> expect [PONG] iTantra Node Online.",
+      "tier": 1,
+      "feature": "F5",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f05_03_node_a_stats_query",
+      "name": "T1_F05_03: Send STATS\\r\\n to Node A -> verify statistics output with TX/RX counters.",
+      "tier": 1,
+      "feature": "F5",
+      "passed": true,
+      "duration": 3.814697265625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f05_04_node_b_stats_query",
+      "name": "T1_F05_04: Send STATS\\r\\n to Node B -> verify statistics output.",
+      "tier": 1,
+      "feature": "F5",
+      "passed": true,
+      "duration": 2.384185791015625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f05_05_baud_rate_stability",
+      "name": "T1_F05_05: Verify baud rate stability over 10 consecutive PING/PONG cycles.",
+      "tier": 1,
+      "feature": "F5",
+      "passed": true,
+      "duration": 3.5762786865234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f06_01_node_a_to_b_lora_transmission",
+      "name": "T1_F06_01: Node A transmits binary packet -> Node B receives packet over LoRa link.",
+      "tier": 1,
+      "feature": "F6",
+      "passed": true,
+      "duration": 5.650520324707031e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f06_02_node_b_to_a_lora_transmission",
+      "name": "T1_F06_02: Node B transmits binary packet -> Node A receives packet over LoRa link.",
+      "tier": 1,
+      "feature": "F6",
+      "passed": true,
+      "duration": 4.029273986816406e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f06_03_lora_rssi_range",
+      "name": "T1_F06_03: Verify RSSI reported by receiver is within physical operating range (-120 to -30 dBm).",
+      "tier": 1,
+      "feature": "F6",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f06_04_lora_snr_range",
+      "name": "T1_F06_04: Verify SNR reported by receiver is valid (-20 dB to +15 dB).",
+      "tier": 1,
+      "feature": "F6",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f06_05_lora_crc16_check",
+      "name": "T1_F06_05: Verify CRC16 hardware check passes on received over-the-air frame.",
+      "tier": 1,
+      "feature": "F6",
+      "passed": true,
+      "duration": 3.838539123535156e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f07_01_hindi_compression_under_60_bytes",
+      "name": "T1_F07_01: Compress Hindi utterance -> verify payload < 60 bytes.",
+      "tier": 1,
+      "feature": "F7",
+      "passed": true,
+      "duration": 1.6689300537109375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f07_02_bengali_compression_ratio",
+      "name": "T1_F07_02: Compress Bengali utterance -> verify compression ratio > 2.5:1.",
+      "tier": 1,
+      "feature": "F7",
+      "passed": true,
+      "duration": 7.152557373046875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f07_03_tamil_roundtrip_lossless",
+      "name": "T1_F07_03: Compress Tamil utterance -> verify roundtrip lossless decompress.",
+      "tier": 1,
+      "feature": "F7",
+      "passed": true,
+      "duration": 8.344650268554688e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f07_04_telugu_header_flag",
+      "name": "T1_F07_04: Compress Telugu utterance -> verify compression flag set in header.",
+      "tier": 1,
+      "feature": "F7",
+      "passed": true,
+      "duration": 1.0967254638671875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f07_05_all_10_indic_languages_clean_roundtrip",
+      "name": "T1_F07_05: Validate all 10 Indic languages compress and decompress cleanly.",
+      "tier": 1,
+      "feature": "F7",
+      "passed": true,
+      "duration": 3.218650817871094e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f08_01_arq_queued_to_sending",
+      "name": "T1_F08_01: Outbound packet enters state QUEUED then SENDING.",
+      "tier": 1,
+      "feature": "F8",
+      "passed": true,
+      "duration": 9.775161743164062e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f08_02_arq_forward_to_node",
+      "name": "T1_F08_02: Forward to node transitions state to SENT_TO_NODE.",
+      "tier": 1,
+      "feature": "F8",
+      "passed": true,
+      "duration": 4.76837158203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f08_03_arq_matching_ack_received",
+      "name": "T1_F08_03: Inbound matching ACK packet transitions to RADIO_ACKNOWLEDGED.",
+      "tier": 1,
+      "feature": "F8",
+      "passed": true,
+      "duration": 8.106231689453125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f08_04_arq_delivery_ack",
+      "name": "T1_F08_04: App-level delivery ACK transitions state to DELIVERED.",
+      "tier": 1,
+      "feature": "F8",
+      "passed": true,
+      "duration": 5.9604644775390625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f08_05_arq_monotonic_sequence_increment",
+      "name": "T1_F08_05: Verify sequence number increments monotonically per transmitted message.",
+      "tier": 1,
+      "feature": "F8",
+      "passed": true,
+      "duration": 9.298324584960938e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f09_01_sos_alert_preempts_chat_packets",
+      "name": "T1_F09_01: Enqueue 3 background chat packets, then enqueue 1 SOS Alert -> SOS dequeues first.",
+      "tier": 1,
+      "feature": "F9",
+      "passed": true,
+      "duration": 1.2636184692382812e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f09_02_urgent_flag_bit_in_header",
+      "name": "T1_F09_02: Verify FLAG_URGENT bit (Bit 0) is set in binary header for SOS alert.",
+      "tier": 1,
+      "feature": "F9",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f09_03_medical_alert_priority_sorting",
+      "name": "T1_F09_03: Medical alert preset serialization and urgent priority sorting.",
+      "tier": 1,
+      "feature": "F9",
+      "passed": true,
+      "duration": 4.0531158447265625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f09_04_evacuation_alert_priority_sorting",
+      "name": "T1_F09_04: Evacuation alert preset serialization and urgent priority sorting.",
+      "tier": 1,
+      "feature": "F9",
+      "passed": true,
+      "duration": 3.0994415283203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f09_05_resume_non_urgent_after_emergency_cleared",
+      "name": "T1_F09_05: Verification that non-urgent packets resume transmission once emergency queue is clear.",
+      "tier": 1,
+      "feature": "F9",
+      "passed": true,
+      "duration": 4.291534423828125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f10_01_cobs_encoding_delimiter_no_internal_zeros",
+      "name": "T1_F10_01: COBS frame encoding wraps binary packet with trailing 0x00 delimiter without internal zeros.",
+      "tier": 1,
+      "feature": "F10",
+      "passed": true,
+      "duration": 5.0067901611328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f10_02_cobs_decoding_roundtrip",
+      "name": "T1_F10_02: COBS frame decoding reconstructs exact original binary packet.",
+      "tier": 1,
+      "feature": "F10",
+      "passed": true,
+      "duration": 6.9141387939453125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f10_03_simulated_usb_serial_delivery",
+      "name": "T1_F10_03: Simulated USB-Serial transport delivers framed packet to transceiver harness.",
+      "tier": 1,
+      "feature": "F10",
+      "passed": true,
+      "duration": 1.7404556274414062e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f10_04_serial_rx_fragmented_chunk_parsing",
+      "name": "T1_F10_04: Serial RX parser correctly extracts packet across fragmented chunk reads.",
+      "tier": 1,
+      "feature": "F10",
+      "passed": true,
+      "duration": 9.059906005859375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f10_05_connection_lifecycle_transitions",
+      "name": "T1_F10_05: Connection lifecycle (CONNECT -> ACTIVE -> DISCONNECT -> RECONNECT) transitions properly.",
+      "tier": 1,
+      "feature": "F10",
+      "passed": true,
+      "duration": 2.6226043701171875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f11_01_insert_message_autoincrement_pk",
+      "name": "T1_F11_01: Insert MessageEntity into Room DB -> verify auto-generated primary key.",
+      "tier": 1,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.0005548000335693359,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f11_02_query_messages_by_session_ordered",
+      "name": "T1_F11_02: Query messages by sessionId ordered by timestamp ascending.",
+      "tier": 1,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.00014925003051757812,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f11_03_update_delivery_status",
+      "name": "T1_F11_03: Update delivery status from SENT_TO_NODE to DELIVERED.",
+      "tier": 1,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.00012135505676269531,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f11_04_query_undelivered_retry_queue",
+      "name": "T1_F11_04: Query undelivered messages (deliveryStatus != DELIVERED) for offline retry queue.",
+      "tier": 1,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.0001423358917236328,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f11_05_delete_session_history",
+      "name": "T1_F11_05: Delete message / clear session history removes records cleanly.",
+      "tier": 1,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.0001437664031982422,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f12_01_save_node_id_preference",
+      "name": "T1_F12_01: Save user node ID preference -> verify persistent retrieval.",
+      "tier": 1,
+      "feature": "F12",
+      "passed": true,
+      "duration": 3.0279159545898438e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f12_02_save_primary_indic_language",
+      "name": "T1_F12_02: Save primary Indic language preference (e.g. Hindi).",
+      "tier": 1,
+      "feature": "F12",
+      "passed": true,
+      "duration": 4.291534423828125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f12_03_save_rf_frequency_preference",
+      "name": "T1_F12_03: Save RF frequency preference (433.175 MHz) -> verify constraints.",
+      "tier": 1,
+      "feature": "F12",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f12_04_save_vad_silence_threshold",
+      "name": "T1_F12_04: Save silence threshold for VAD -> verify value bounds (300ms to 2000ms).",
+      "tier": 1,
+      "feature": "F12",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f12_05_reset_preferences_to_factory_defaults",
+      "name": "T1_F12_05: Reset preferences to factory defaults restores initial specification values.",
+      "tier": 1,
+      "feature": "F12",
+      "passed": true,
+      "duration": 2.384185791015625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f13_01_generate_high_entropy_session_key",
+      "name": "T1_F13_01: Generate 32-byte high-entropy session pairing key.",
+      "tier": 1,
+      "feature": "F13",
+      "passed": true,
+      "duration": 1.0967254638671875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f13_02_generate_pairing_qr_payload",
+      "name": "T1_F13_02: Generate pairing QR code payload containing Node ID, Secret, and timestamp.",
+      "tier": 1,
+      "feature": "F13",
+      "passed": true,
+      "duration": 3.7670135498046875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f13_03_derive_hkdf_sha256_subkeys",
+      "name": "T1_F13_03: Derive HKDF-SHA256 encryption and authentication sub-keys from master secret.",
+      "tier": 1,
+      "feature": "F13",
+      "passed": true,
+      "duration": 0.0007946491241455078,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f13_04_verify_hmac_6_digit_confirmation_code",
+      "name": "T1_F13_04: Verify HMAC-SHA256 6-digit confirmation code matches deterministically on both nodes.",
+      "tier": 1,
+      "feature": "F13",
+      "passed": true,
+      "duration": 8.869171142578125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f13_05_eradication_of_static_pairing_secret",
+      "name": "T1_F13_05: Confirm eradication of static string 'iTantra-Fixed-Pairing-Secret-32B' from PairingManager.",
+      "tier": 1,
+      "feature": "F13",
+      "passed": true,
+      "duration": 0.0002791881561279297,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f14_01_audio_capture_buffer_init",
+      "name": "T1_F14_01: Audio capture manager initialises 16 kHz 16-bit mono PCM buffer.",
+      "tier": 1,
+      "feature": "F14",
+      "passed": true,
+      "duration": 5.4836273193359375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f14_02_audio_buffer_zeroing_privacy",
+      "name": "T1_F14_02: Privacy hygiene: audio buffer is zeroed immediately after transcription.",
+      "tier": 1,
+      "feature": "F14",
+      "passed": true,
+      "duration": 1.9550323486328125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f14_03_system_speech_recognizer_callback",
+      "name": "T1_F14_03: Android system speech recognizer integration handles valid transcription callback.",
+      "tier": 1,
+      "feature": "F14",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f14_04_system_tts_engine_interface",
+      "name": "T1_F14_04: Android system TTS engine integration interface synthesizes audio without mock delay loops.",
+      "tier": 1,
+      "feature": "F14",
+      "passed": true,
+      "duration": 2.6226043701171875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f14_05_speech_pipeline_offline_fallback",
+      "name": "T1_F14_05: Speech pipeline fallback: if offline model absent, gracefully routes to system engine.",
+      "tier": 1,
+      "feature": "F14",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f15_01_genuine_sha256_hash_verification",
+      "name": "T1_F15_01: Compute genuine SHA-256 hash of model pack -> verify matches manifest.",
+      "tier": 1,
+      "feature": "F15",
+      "passed": true,
+      "duration": 0.002862691879272461,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f15_02_eradication_of_empty_string_hash",
+      "name": "T1_F15_02: Confirm eradication of 0-byte empty string hash (e3b0c442...) in validation logic.",
+      "tier": 1,
+      "feature": "F15",
+      "passed": true,
+      "duration": 3.814697265625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f15_03_verify_checksum_inspects_real_bytes",
+      "name": "T1_F15_03: Confirm verifyChecksum inspects real file bytes instead of returning pack.isDemoPack.",
+      "tier": 1,
+      "feature": "F15",
+      "passed": true,
+      "duration": 0.0028276443481445312,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f15_04_reject_corrupted_model_pack",
+      "name": "T1_F15_04: Reject corrupted model pack whose computed SHA-256 differs from manifest.",
+      "tier": 1,
+      "feature": "F15",
+      "passed": true,
+      "duration": 0.0032262802124023438,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f15_05_model_status_ready_only_after_verification",
+      "name": "T1_F15_05: LanguageModelManager reports ModelStatus.READY only after true checksum verification.",
+      "tier": 1,
+      "feature": "F15",
+      "passed": true,
+      "duration": 7.3909759521484375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f16_01_diagnostics_binds_real_rssi",
+      "name": "T1_F16_01: Diagnostics viewmodel binds real measured RF RSSI from node status packets.",
+      "tier": 1,
+      "feature": "F16",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f16_02_diagnostics_binds_real_snr",
+      "name": "T1_F16_02: Diagnostics viewmodel binds real measured RF SNR.",
+      "tier": 1,
+      "feature": "F16",
+      "passed": true,
+      "duration": 9.5367431640625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f16_03_active_ram_metric_bound",
+      "name": "T1_F16_03: Active RAM metric bound to non-negative heap memory consumption.",
+      "tier": 1,
+      "feature": "F16",
+      "passed": true,
+      "duration": 2.1457672119140625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f16_04_packet_loss_calculation",
+      "name": "T1_F16_04: Real-time packet loss counter computed as (txCount - ackCount) / txCount * 100%.",
+      "tier": 1,
+      "feature": "F16",
+      "passed": true,
+      "duration": 2.86102294921875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f16_05_csv_telemetry_export",
+      "name": "T1_F16_05: CSV telemetry export generates well-formatted timestamped CSV rows.",
+      "tier": 1,
+      "feature": "F16",
+      "passed": true,
+      "duration": 3.0040740966796875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f17_01_app_build_gradle_sdk_versions",
+      "name": "T1_F17_01: Verify app/build.gradle.kts configuration has compileSdk 35 and targetSdk 35.",
+      "tier": 1,
+      "feature": "F17",
+      "passed": true,
+      "duration": 0.00019812583923339844,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f17_02_apk_outputs_configuration",
+      "name": "T1_F17_02: Verify APK output configuration and application ID.",
+      "tier": 1,
+      "feature": "F17",
+      "passed": true,
+      "duration": 7.891654968261719e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f17_03_apk_packaging_resources",
+      "name": "T1_F17_03: Verify packaging resources excludes duplicate META-INF licenses.",
+      "tier": 1,
+      "feature": "F17",
+      "passed": true,
+      "duration": 6.771087646484375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f17_04_android_manifest_permissions",
+      "name": "T1_F17_04: Verify AndroidManifest.xml with required Bluetooth & Audio permissions.",
+      "tier": 1,
+      "feature": "F17",
+      "passed": true,
+      "duration": 9.489059448242188e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f17_05_namespace_matches_package",
+      "name": "T1_F17_05: Verify namespace configuration matches com.itantra.",
+      "tier": 1,
+      "feature": "F17",
+      "passed": true,
+      "duration": 7.605552673339844e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f18_01_test_infra_spec_exists",
+      "name": "T1_F18_01: Verify TEST_INFRA.md exists and documents all 20 features across 4 tiers.",
+      "tier": 1,
+      "feature": "F18",
+      "passed": true,
+      "duration": 5.9604644775390625e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f18_02_cli_runner_executable",
+      "name": "T1_F18_02: Verify CLI test runner run_e2e_tests.py exists and is parseable.",
+      "tier": 1,
+      "feature": "F18",
+      "passed": true,
+      "duration": 0.00010061264038085938,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f18_03_report_export_capabilities",
+      "name": "T1_F18_03: Verify test runner supports JSON and JUnit XML reporting options.",
+      "tier": 1,
+      "feature": "F18",
+      "passed": true,
+      "duration": 6.818771362304688e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f18_04_dual_mode_harness_operation",
+      "name": "T1_F18_04: Verify test harness operates in both hardware mode and standalone simulation mode.",
+      "tier": 1,
+      "feature": "F18",
+      "passed": true,
+      "duration": 0.00800776481628418,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f18_05_tier_directory_hierarchy",
+      "name": "T1_F18_05: Verify 4-tier directory hierarchy exists under tests/e2e/.",
+      "tier": 1,
+      "feature": "F18",
+      "passed": true,
+      "duration": 0.00013685226440429688,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f19_01_identify_rf_packet_dropouts",
+      "name": "T1_F19_01: Adversarial test suite correctly identifies simulated RF packet dropouts.",
+      "tier": 1,
+      "feature": "F19",
+      "passed": true,
+      "duration": 9.5367431640625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f19_02_replay_attack_rejected",
+      "name": "T1_F19_02: Replay attack protection rejects packets with duplicate nonces or old sequence numbers.",
+      "tier": 1,
+      "feature": "F19",
+      "passed": true,
+      "duration": 1.0967254638671875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f19_03_bit_flip_corruption_tag_rejection",
+      "name": "T1_F19_03: Bit-flip corruption detection verifies AES-GCM authentication tag rejection.",
+      "tier": 1,
+      "feature": "F19",
+      "passed": true,
+      "duration": 0.0004916191101074219,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f19_04_out_of_order_ble_chunk_drop",
+      "name": "T1_F19_04: Out-of-order BLE chunk reassembly drop and recovery verification.",
+      "tier": 1,
+      "feature": "F19",
+      "passed": true,
+      "duration": 1.0967254638671875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f19_05_malformed_header_graceful_rejection",
+      "name": "T1_F19_05: Malformed header injection produces graceful rejection without crashing.",
+      "tier": 1,
+      "feature": "F19",
+      "passed": true,
+      "duration": 5.245208740234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f20_01_readme_contains_architecture_and_wiring",
+      "name": "T1_F20_01: Verify README.md contains updated architecture, pinout diagrams, and setup instructions.",
+      "tier": 1,
+      "feature": "F20",
+      "passed": true,
+      "duration": 0.00019860267639160156,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f20_02_ble_protocol_documentation",
+      "name": "T1_F20_02: Verify Docs/ESP32_BLE_PROTOCOL.md documents 31-byte header and GATT characteristics.",
+      "tier": 1,
+      "feature": "F20",
+      "passed": true,
+      "duration": 0.0002148151397705078,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f20_03_firmware_readme_wiring_guide",
+      "name": "T1_F20_03: Verify firmware/esp32_lora_bridge/README.md contains accurate wiring guides.",
+      "tier": 1,
+      "feature": "F20",
+      "passed": true,
+      "duration": 0.00010347366333007812,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f20_04_gitignore_rules",
+      "name": "T1_F20_04: Verify .gitignore correctly blocks .gradle/ and build/.",
+      "tier": 1,
+      "feature": "F20",
+      "passed": true,
+      "duration": 9.489059448242188e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t1_f20_05_git_repo_integrity",
+      "name": "T1_F20_05: Verify git repository integrity.",
+      "tier": 1,
+      "feature": "F20",
+      "passed": true,
+      "duration": 3.0040740966796875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_01_uint32_sequence_number_rollover",
+      "name": "T2_B02_01: Sequence number rollover: sequence UInt32 0xFFFFFFFF -> 0x00000000.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.8596649169921875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_02_retransmission_timeout_retry_exhaustion",
+      "name": "T2_B02_02: Exactly 3 retries triggered on timeout then state transitions to FAILED.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.1920928955078125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_03_zero_timeout_boundary_handling",
+      "name": "T2_B02_03: Zero timeout boundary handling defaults safely without crash.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.86102294921875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_04_out_of_order_ack_arrival",
+      "name": "T2_B02_04: Out-of-order ACK packet arrival (Seq N+1 received before Seq N) is rejected.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.291534423828125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_05_duplicate_ack_receipt",
+      "name": "T2_B02_05: Duplicate ACK receipt is ignored without resetting state.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.5762786865234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_06_corrupted_session_id_ack",
+      "name": "T2_B02_06: ACK packet with corrupted SessionID does not acknowledge message.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.1457672119140625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_07_emergency_queue_saturation_100_alerts",
+      "name": "T2_B02_07: Emergency queue saturation (100 SOS alerts queued simultaneously).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.43865966796875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_08_urgent_alert_preempts_actively_transmitting",
+      "name": "T2_B02_08: Urgent alert preempts normal chat traffic immediately.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.33514404296875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_09_identical_priority_fifo_ordering",
+      "name": "T2_B02_09: Two alerts with identical priority maintain FIFO ordering.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.6226043701171875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_10_max_allowable_emergency_text",
+      "name": "T2_B02_10: Alert payload with maximum allowable emergency text (208 bytes).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_11_rf_loss_50_percent_channel",
+      "name": "T2_B02_11: 50% simulated RF packet drop channel recovers frames via retries.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.52587890625e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_12_burst_noise_channel_drops",
+      "name": "T2_B02_12: Burst noise channel dropping consecutive packets.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.1457672119140625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_13_random_byte_corruption_detection",
+      "name": "T2_B02_13: Random byte corruption of 1% detected by packet unpacker or CRC16 check.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.200241088867188e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_14_maximum_mtu_fragmentation_stress",
+      "name": "T2_B02_14: Maximum MTU fragmentation stress: 2000-byte payload split across 10 LoRa packets.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.62939453125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_15_high_rf_latency_channel_900ms",
+      "name": "T2_B02_15: High RF latency channel (900 ms per hop) handling.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_16_extreme_path_loss_rssi_minus_125",
+      "name": "T2_B02_16: Extreme path loss: RSSI at -125 dBm (receiver sensitivity edge).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.5299530029296875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_17_strong_signal_saturation_rssi_minus_25",
+      "name": "T2_B02_17: Strong signal saturation: RSSI at -25 dBm.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_18_minimum_snr_threshold_spread_spectrum",
+      "name": "T2_B02_18: Minimum SNR threshold (-20 dB in LoRa spread spectrum).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_19_freertos_queue_depth_limit",
+      "name": "T2_B02_19: FreeRTOS queue full condition (depth = 20) blocks/drops safely.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.6226043701171875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_20_ping_flooding_100_in_1s",
+      "name": "T2_B02_20: High-frequency PING flooding (100 PINGs in 1 second) survives cleanly.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.4836273193359375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_21_truncated_ping_command_handling",
+      "name": "T2_B02_21: Truncated PING command ('PIN\\r') rejected without PONG.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.1920928955078125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_22_giant_serial_line_buffer_protection",
+      "name": "T2_B02_22: Giant serial line (> 1024 bytes) does not overflow buffer.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 9.5367431640625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_23_null_byte_injection_on_serial",
+      "name": "T2_B02_23: Binary null byte (0x00) injection on serial command interface.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_24_multi_fragment_reassembly_timeout",
+      "name": "T2_B02_24: Incomplete multi-fragment reassembly times out and flushes buffer.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.8371810913085938e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b02_25_serial_response_latency_bounded",
+      "name": "T2_B02_25: Serial PING response latency bounded under 50ms in simulator.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.1920928955078125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_01_nonce_monotonic_no_repeats",
+      "name": "T2_B03_01: AES-256-GCM nonce collision resistance: monotonic counter cannot repeat.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.9577484130859375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_02_aad_header_byte0_tampering",
+      "name": "T2_B03_02: AAD header byte 0 tampered -> AES-GCM tag verification fails immediately.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.743171691894531e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_03_aad_header_sequence_tampering",
+      "name": "T2_B03_03: AAD header sequence number tampered -> tag verification fails.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.049041748046875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_04_ciphertext_bit_flip_zero_plaintext_leak",
+      "name": "T2_B03_04: Ciphertext byte flipped -> tag verification failure, zero plaintext leaked.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 9.5367431640625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_05_auth_tag_corruption",
+      "name": "T2_B03_05: Auth tag with 1 bit corrupted fails verification.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.867813110351562e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_06_session_key_rotation_threshold_1000",
+      "name": "T2_B03_06: Session key rotation threshold triggers after 1000 messages.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.482269287109375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_07_replay_window_boundary_edge_64",
+      "name": "T2_B03_07: Replay window 64-bit bitmap edge: frame sequence N-64 rejected, N-63 accepted.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.5762786865234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_08_replay_window_sliding_forward",
+      "name": "T2_B03_08: Sequence N+100 shifts window, old sequence N becomes rejected.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_09_master_secret_length_validation",
+      "name": "T2_B03_09: Master secret shorter than 32 bytes is rejected or flagged.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_10_hkdf_salt_variation_orthogonality",
+      "name": "T2_B03_10: Key derivation salt variation produces completely orthogonal subkeys.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.719329833984375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_11_zero_byte_model_file_checksum",
+      "name": "T2_B03_11: 0-byte model file checksum check fails.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0004837512969970703,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_12_single_byte_corrupted_model_file",
+      "name": "T2_B03_12: Model file 1 byte corrupted -> SHA-256 mismatch detected.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.0503997802734375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_13_non_existent_model_file",
+      "name": "T2_B03_13: Non-existent model file returns ModelStatus.NOT_INSTALLED.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.695487976074219e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_14_read_only_model_directory_handling",
+      "name": "T2_B03_14: Read-only model file permits hash verification without write access.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0018906593322753906,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_15_large_model_checksum_performance",
+      "name": "T2_B03_15: Large model file (10MB simulated) checksum computation time < 500ms on host.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.007963895797729492,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_16_room_db_1000_messages_query_speed",
+      "name": "T2_B03_16: Room DB storage boundary: 1,000 messages stored -> query performance < 50ms.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0019237995147705078,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_17_message_text_64kb_payload",
+      "name": "T2_B03_17: Message text with 64KB string storage.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.00027632713317871094,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_18_concurrent_database_writes",
+      "name": "T2_B03_18: Concurrent write from 4 background threads -> thread-safe locking.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.001253366470336914,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_19_sql_injection_sanitization",
+      "name": "T2_B03_19: SQL injection string in message senderId or body sanitized via parameterized DAO.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.00016021728515625,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_20_database_migration_v1_to_v2",
+      "name": "T2_B03_20: Database migration from version 1 to 2 schema integrity.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0001735687255859375,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_21_replay_window_initial_state",
+      "name": "T2_B03_21: Replay window initial sequence 0 handling.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.62939453125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_22_empty_plaintext_authenticated_envelope",
+      "name": "T2_B03_22: Encrypting empty plaintext produces valid auth tag and zero ciphertext.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.7206878662109375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_23_corrupted_key_fails_decryption",
+      "name": "T2_B03_23: Decrypting with wrong key raises authentication failure.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.5497207641601562e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_24_truncated_tag_rejection",
+      "name": "T2_B03_24: Truncated 8-byte tag rejected (must be 16 bytes).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b03_25_db_null_value_handling",
+      "name": "T2_B03_25: Database NULL handling on nullable fields.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.00012803077697753906,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_01_compress_empty_string",
+      "name": "T2_B04_01: Compress empty string -> valid 0-byte payload with valid header.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.0994415283203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_02_compress_single_indic_character",
+      "name": "T2_B04_02: Compress 1-character Indic string ('\u0915').",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.0742416381835938e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_03_compress_maximal_utterance_500_chars",
+      "name": "T2_B04_03: Compress maximal utterance (500 characters) into fragments.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.267692565917969e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_04_compress_mixed_unicode_emoji",
+      "name": "T2_B04_04: Compress mixed alphanumeric, emoji, and Indic Unicode string.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.0013580322265625e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_05_decompress_corrupted_token_stream",
+      "name": "T2_B04_05: Decompress corrupted/truncated compressed token stream throws safe exception.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.86102294921875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_06_audio_capture_complete_silence_rms_zero",
+      "name": "T2_B04_06: Audio capture with zero microphone input (complete silence) -> RMS = 0.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0002803802490234375,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_07_audio_capture_clipping_distortion",
+      "name": "T2_B04_07: Audio capture with clipping distortion (maximum 16-bit PCM 32767).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.430511474609375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_08_fast_turn_taking_pause_detection",
+      "name": "T2_B04_08: Fast turn-taking: pause >= 600ms separates into two distinct utterances.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.384185791015625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_09_tts_unsupported_locale_fallback",
+      "name": "T2_B04_09: TTS requested for unsupported locale code falls back to English.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_10_long_speech_utterance_memory_bounded",
+      "name": "T2_B04_10: Very long speech utterance (60s audio buffer) stays within ~1.92 MB.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_11_wpc_exact_360s_airtime_limit",
+      "name": "T2_B04_11: WPC duty cycle enforcement: exactly at 360s airtime limit.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.2159347534179688e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_12_wpc_361s_airtime_blocks_transmission",
+      "name": "T2_B04_12: WPC duty cycle enforcement: attempting transmission at 361s blocks transmission.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.4836273193359375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_13_wpc_window_expiry_restores_quota",
+      "name": "T2_B04_13: After 1-hour window expires, full airtime quota is restored.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.5299530029296875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_14_telemetry_zero_packets_no_division_by_zero",
+      "name": "T2_B04_14: Telemetry with 0 packets transmitted reports 0.0% loss (no div by zero).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_15_telemetry_100_percent_loss",
+      "name": "T2_B04_15: Telemetry with 100% packet loss reports 100.0%.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 9.5367431640625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_16_extreme_rssi_clamping",
+      "name": "T2_B04_16: Extreme RSSI values (-150 dBm and +10 dBm) clamped in UI viewmodel.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_17_rapid_csv_export_10000_rows",
+      "name": "T2_B04_17: Rapid CSV export generation with 10,000 rows completes < 200ms.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.005520820617675781,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_18_telemetry_disconnected_state",
+      "name": "T2_B04_18: Telemetry data binding when node disconnected shows DISCONNECTED cleanly.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.430511474609375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_19_invalid_rf_frequency_clamping",
+      "name": "T2_B04_19: Invalid RF frequency (e.g. 999 MHz) clamped to 433.175 MHz.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_20_invalid_negative_node_id_clamping",
+      "name": "T2_B04_20: Invalid negative node ID clamped to valid UInt32.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_21_rapid_preference_toggle_debouncing",
+      "name": "T2_B04_21: Rapid preference toggle (100 times in 100ms) debounces to last state.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.245208740234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_22_test_runner_missing_com_port_fallback",
+      "name": "T2_B04_22: Test runner handles missing hardware COM ports with simulated fallback.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.384185791015625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_23_report_generation_non_existent_directory",
+      "name": "T2_B04_23: Report generation creates missing parent directories cleanly.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0019369125366210938,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_24_single_isolated_feature_filtering",
+      "name": "T2_B04_24: Execution of single isolated feature test filter logic.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.86102294921875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b04_25_test_runner_summary_format_validation",
+      "name": "T2_B04_25: Test runner summary table formatting validation.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.86102294921875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_01_zero_byte_ciphertext",
+      "name": "T2_B01_01: Zero-byte ciphertext produces valid 47-byte minimum packet.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.430511474609375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_02_single_byte_ciphertext",
+      "name": "T2_B01_02: 1-byte ciphertext produces valid 48-byte packet.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.5762786865234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_03_max_allowable_ciphertext_208_bytes",
+      "name": "T2_B01_03: Maximum allowable ciphertext (208 bytes) fits in 255-byte FIFO limit.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.245208740234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_04_overflow_ciphertext_exceeding_208_bytes_rejected",
+      "name": "T2_B01_04: Ciphertext exceeding 208 bytes rejected by pack_frame with ValueError.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.7220458984375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_05_underflow_packet_less_than_47_bytes_rejected",
+      "name": "T2_B01_05: Raw packet shorter than 47 bytes rejected by unpack_frame.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.0994415283203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_06_cobs_all_zeros_payload",
+      "name": "T2_B01_06: COBS framing on all-zeros byte array.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 8.58306884765625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_07_cobs_all_ff_payload",
+      "name": "T2_B01_07: COBS framing on all-0xFF byte array.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.049041748046875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_08_cobs_empty_payload",
+      "name": "T2_B01_08: COBS framing on empty byte array.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.9073486328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_09_cobs_missing_delimiter_handling",
+      "name": "T2_B01_09: COBS decoding on corrupted frame missing trailing 0x00.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.0067901611328125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_10_cobs_corrupted_pointer_rejection",
+      "name": "T2_B01_10: COBS decoding on frame with premature end throws ValueError.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.6226043701171875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_11_wpc_minimum_tx_power",
+      "name": "T2_B01_11: Minimum transmission power (+2 dBm) boundary check.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.384185791015625e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_12_wpc_maximum_tx_power_cap",
+      "name": "T2_B01_12: Maximum allowable transmission power strictly capped at +10 dBm (WPC ERP).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_13_spi_clock_boundary",
+      "name": "T2_B01_13: SPI clock frequency boundary (1 MHz to 10 MHz).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.1920928955078125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_14_serial_baud_rate_boundary_detection",
+      "name": "T2_B01_14: Serial communication with incorrect baud rate (9600 vs 115200) detects framing error.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 7.152557373046875e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_15_usb_hot_unplug_simulation",
+      "name": "T2_B01_15: USB hot-unplug simulation during active serial write raises cleanly.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.3126602172851562e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_16_protocol_version_mismatch",
+      "name": "T2_B01_16: Unknown protocol version (e.g. 0x99) handling.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.245208740234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_17_all_flags_set_simultaneously",
+      "name": "T2_B01_17: All flags (Urgent, NeedsACK, Compressed) set simultaneously.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 8.58306884765625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_18_fragment_count_boundary",
+      "name": "T2_B01_18: Fragment index 254 of 255 boundary check.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.5762786865234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_19_zero_nonce_padding",
+      "name": "T2_B01_19: Nonce shorter than 12 bytes is padded safely to 12 bytes.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 9.059906005859375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_20_long_nonce_truncation",
+      "name": "T2_B01_20: Nonce longer than 12 bytes is truncated safely to 12 bytes.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_21_crc16_boundary_all_zeros",
+      "name": "T2_B01_21: CRC16 calculation on all-zeros array.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.8358230590820312e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_22_crc16_boundary_all_ones",
+      "name": "T2_B01_22: CRC16 calculation on all-ones array.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.6450881958007812e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_23_header_tampering_mismatch_length",
+      "name": "T2_B01_23: Header ciphertext_len field altered -> unpack_frame rejects length mismatch.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.245208740234375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_24_exact_fifo_limit_boundary_255",
+      "name": "T2_B01_24: Exact SX1278 hardware FIFO limit boundary (255 bytes).",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 1.6689300537109375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t2_b01_25_hardware_reset_rts_toggle",
+      "name": "T2_B01_25: Hardware reset RTS pin toggle handling during boot simulation.",
+      "tier": 2,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.76837158203125e-07,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p01_f01_f02_jdk21_gradle_wrapper",
+      "name": "T3_P01 (F1 x F2): JDK 21 environment executes clean Gradle wrapper evaluation and compiles build script.",
+      "tier": 3,
+      "feature": "F1",
+      "passed": true,
+      "duration": 0.00022721290588378906,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p02_f03_f04_esp32_hardware_matches_firmware",
+      "name": "T3_P02 (F3 x F4): ESP32 hardware detected matches board definition and firmware.",
+      "tier": 3,
+      "feature": "F3",
+      "passed": true,
+      "duration": 0.00013446807861328125,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p03_f04_f05_firmware_ping_pong_boot",
+      "name": "T3_P03 (F4 x F5): Compiled firmware is booted to active PING/PONG state.",
+      "tier": 3,
+      "feature": "F4",
+      "passed": true,
+      "duration": 3.0994415283203125e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p04_f05_f06_physical_ping_lora_bidirectional",
+      "name": "T3_P04 (F5 x F6): PING/PONG validated nodes execute over-the-air bidirectional LoRa packet transmission.",
+      "tier": 3,
+      "feature": "F5",
+      "passed": true,
+      "duration": 3.3855438232421875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p05_f06_f08_lora_transmission_with_arq_ack",
+      "name": "T3_P05 (F6 x F8): LoRa transmission verified through Stop-and-Wait ARQ state machine with link ACKs.",
+      "tier": 3,
+      "feature": "F6",
+      "passed": true,
+      "duration": 1.9073486328125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p06_f07_f13_compressed_payload_encrypted_aes_gcm",
+      "name": "T3_P06 (F7 x F13): Indic compressed text payload is encrypted via AES-256-GCM with 31-byte AAD header.",
+      "tier": 3,
+      "feature": "F7",
+      "passed": true,
+      "duration": 6.771087646484375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p07_f07_f14_stt_to_indic_compression_to_tts",
+      "name": "T3_P07 (F7 x F14): Multilingual speech transcribed by STT is compressed and reconstructed by TTS.",
+      "tier": 3,
+      "feature": "F7",
+      "passed": true,
+      "duration": 5.4836273193359375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p08_f08_f09_emergency_alert_preempts_arq_queue",
+      "name": "T3_P08 (F8 x F9): Emergency SOS alert preempts Stop-and-Wait ARQ chat queue.",
+      "tier": 3,
+      "feature": "F8",
+      "passed": true,
+      "duration": 1.1444091796875e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p09_f08_f10_arq_over_cobs_serial_transport",
+      "name": "T3_P09 (F8 x F10): Stop-and-Wait ARQ state machine operates over COBS-framed USB-Serial OTG transport.",
+      "tier": 3,
+      "feature": "F8",
+      "passed": true,
+      "duration": 2.0265579223632812e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p10_f09_f07_emergency_alert_compressed_under_40b",
+      "name": "T3_P10 (F9 x F7): Emergency alert presets compressed via semantic engine into ultra-compact packets (<40B).",
+      "tier": 3,
+      "feature": "F9",
+      "passed": true,
+      "duration": 4.0531158447265625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p11_f10_f16_usb_serial_telemetry_binding",
+      "name": "T3_P11 (F10 x F16): USB Serial transport telemetry bound to Diagnostics view.",
+      "tier": 3,
+      "feature": "F10",
+      "passed": true,
+      "duration": 3.337860107421875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p12_f11_f12_datastore_configures_room_db_retention",
+      "name": "T3_P12 (F11 x F12): User preferences from DataStore configure Room DB auto-prune retention window.",
+      "tier": 3,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.00022530555725097656,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p13_f11_f08_arq_updates_room_db_delivery_status",
+      "name": "T3_P13 (F11 x F8): Incoming and outgoing Stop-and-Wait ARQ messages update Room DB delivery status.",
+      "tier": 3,
+      "feature": "F11",
+      "passed": true,
+      "duration": 0.00012969970703125,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p14_f12_f13_dynamic_pairing_keys_persisted_in_datastore",
+      "name": "T3_P14 (F12 x F13): Dynamic pairing keys derived via HMAC persisted securely across restarts.",
+      "tier": 3,
+      "feature": "F12",
+      "passed": true,
+      "duration": 3.9577484130859375e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p15_f13_f19_adversarial_replay_rejected_by_dynamic_crypto",
+      "name": "T3_P15 (F13 x F19): Adversarial replay attacks and tampered AAD headers rejected by dynamic crypto session.",
+      "tier": 3,
+      "feature": "F13",
+      "passed": true,
+      "duration": 3.170967102050781e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p16_f14_f15_speech_engine_initializes_after_checksum",
+      "name": "T3_P16 (F14 x F15): Speech engine initializes language packs only after genuine SHA-256 verification.",
+      "tier": 3,
+      "feature": "F14",
+      "passed": true,
+      "duration": 1.5497207641601562e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p17_f15_f16_model_verification_bound_to_diagnostics_ui",
+      "name": "T3_P17 (F15 x F16): Model verification status (Ready vs Corrupted) dynamically bound to Diagnostics UI.",
+      "tier": 3,
+      "feature": "F15",
+      "passed": true,
+      "duration": 4.5299530029296875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p18_f16_f06_measured_rf_metrics_bound_to_home_dashboard",
+      "name": "T3_P18 (F16 x F6): Measured over-the-air LoRa link RSSI/SNR dynamically displayed on Home Dashboard.",
+      "tier": 3,
+      "feature": "F16",
+      "passed": true,
+      "duration": 2.2172927856445312e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p19_f17_f18_apk_compilation_verified_by_e2e_runner",
+      "name": "T3_P19 (F17 x F18): Android APK compilation structure verified by automated E2E test runner.",
+      "tier": 3,
+      "feature": "F17",
+      "passed": true,
+      "duration": 0.00018596649169921875,
+      "error": ""
+    },
+    {
+      "test_id": "test_t3_p20_f19_f20_adversarial_vectors_archived_in_docs",
+      "name": "T3_P20 (F19 x F20): Adversarial test vectors and security boundary specifications archived in Docs/.",
+      "tier": 3,
+      "feature": "F19",
+      "passed": true,
+      "duration": 0.00012683868408203125,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s01_himalayan_landslide_rescue",
+      "name": "T4_S01: Himalayan Landslide Rescue: High-Altitude Voice Bridge (F6, F7, F8, F9, F13, F14).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 6.604194641113281e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s02_cyclone_coastal_blackout_broadcast",
+      "name": "T4_S02: Cyclone Coastal Blackout: Multilingual Emergency Broadcast (F6, F7, F9, F11, F12, F14).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.0001685619354248047,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s03_underground_tunnel_collapse_wired_serial",
+      "name": "T4_S03: Underground Tunnel Collapse: USB-OTG Cabled Radio Link (F5, F6, F8, F10, F11, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.384185791015625e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s04_border_patrol_turn_taking_ptt",
+      "name": "T4_S04: Border Patrol Turn-Taking: Encrypted Push-to-Talk (PTT) (F6, F7, F8, F13, F14, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.409385681152344e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s05_flood_evacuation_multi_node_persistence",
+      "name": "T4_S05: Flood Evacuation Center: Multi-Node P2P Chat Relaying (F6, F8, F11, F12, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 0.00010657310485839844,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s06_remote_tribal_clinic_telemedicine",
+      "name": "T4_S06: Remote Tribal Clinic: Telemedicine Speech Translation (F7, F11, F14, F15).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.4836273193359375e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s07_defense_perimeter_night_watch_silent_alert",
+      "name": "T4_S07: Defense Perimeter Night Watch: Silent Alerting (F8, F9, F10, F13, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.5299530029296875e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s08_post_earthquake_diagnostics_logging",
+      "name": "T4_S08: Post-Earthquake Infrastructure Survey: Diagnostics Logging (F6, F11, F12, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.9591064453125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s09_tactical_qr_pairing_and_field_handshake",
+      "name": "T4_S09: Tactical Node QR Pairing & Handshake in the Field (F3, F5, F12, F13).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 2.765655517578125e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s10_rapid_airtime_surge_wpc_enforcement",
+      "name": "T4_S10: Rapid Airtime Surge: WPC Duty Cycle Enforcement (F4, F6, F8, F16).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 4.887580871582031e-05,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s11_rf_jamming_arq_resilience",
+      "name": "T4_S11: Severe RF Jamming & Noise: ARQ Retransmission Resilience (F6, F8, F19).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 5.9604644775390625e-06,
+      "error": ""
+    },
+    {
+      "test_id": "test_t4_s12_end_to_end_cold_boot_to_voice_synthesis",
+      "name": "T4_S12: End-to-End Cold Boot to Voice Synthesis Pipeline Acceptance (F1-F20 Comprehensive).",
+      "tier": 4,
+      "feature": "F0",
+      "passed": true,
+      "duration": 3.790855407714844e-05,
+      "error": ""
+    }
+  ]
+}
